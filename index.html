@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Worky 承攬制數據發想 — 2026.05.21</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #040810;
+    --surface: #070e1c;
+    --surface2: #0b1528;
+    --cyan: #00e5ff;
+    --teal: #00b4d8;
+    --violet: #7b2fff;
+    --pink: #ff2d78;
+    --gold: #ffd166;
+    --text: #e8f4ff;
+    --muted: #5a7a9a;
+    --grid: rgba(0, 229, 255, 0.04);
+    --border: rgba(0, 229, 255, 0.12);
+    --glow-cyan: 0 0 20px rgba(0, 229, 255, 0.3);
+    --glow-violet: 0 0 20px rgba(123, 47, 255, 0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans TC', sans-serif;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Grid bg */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Ambient glow orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+  .orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, #7b2fff44, transparent 70%); top: -200px; right: -100px; }
+  .orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, #00e5ff33, transparent 70%); bottom: 10%; left: -150px; }
+  .orb-3 { width: 300px; height: 300px; background: radial-gradient(circle, #ff2d7822, transparent 70%); top: 50%; left: 40%; }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 0 60px;
+    position: relative;
+  }
+
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero-tag::before {
+    content: '';
+    display: inline-block;
+    width: 40px; height: 1px;
+    background: var(--cyan);
+    box-shadow: var(--glow-cyan);
+  }
+
+  .hero-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+  }
+  .hero-title .accent { color: var(--cyan); text-shadow: var(--glow-cyan); }
+  .hero-title .dim { color: var(--muted); }
+
+  .hero-sub {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 20px;
+    font-weight: 300;
+    color: rgba(232,244,255,0.6);
+    margin-bottom: 48px;
+    letter-spacing: 2px;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .meta-chip {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--muted);
+    background: rgba(0,229,255,0.03);
+  }
+  .meta-chip span { color: var(--cyan); }
+
+  /* Floating node diagram for hero */
+  .hero-graphic {
+    position: absolute;
+    right: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 380px; height: 380px;
+    opacity: 0.7;
+  }
+
+  /* ── SECTION HEADING ── */
+  .section {
+    padding: 80px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 5px;
+    color: var(--violet);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .section-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(20px, 3vw, 32px);
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  .section-note {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 48px;
+  }
+
+  /* ── ARCHITECTURE OVERVIEW ── */
+  .arch-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-bottom: 32px;
+  }
+
+  .arch-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .arch-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--violet));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s;
+  }
+  .arch-card:hover { border-color: rgba(0,229,255,0.3); transform: translateY(-2px); }
+  .arch-card:hover::before { transform: scaleX(1); }
+
+  .arch-card-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    letter-spacing: 3px;
+  }
+
+  .arch-card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--cyan);
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+
+  .arch-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .arch-items li {
+    font-size: 12px;
+    color: rgba(232,244,255,0.65);
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .arch-items li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--cyan);
+    opacity: 0.6;
+  }
+
+  /* ── METRICS TABLE ── */
+  .metrics-parts {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .part-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .part-header {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    align-items: stretch;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .part-label {
+    padding: 16px 24px;
+    background: var(--surface2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .part-label .part-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .part-label .part-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+  }
+
+  .part-indicators {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,229,255,0.05);
+    border: 1px solid rgba(0,229,255,0.1);
+    padding: 6px 14px;
+    border-radius: 2px;
+    font-size: 11.5px;
+    color: var(--text);
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .indicator:hover {
+    background: rgba(0,229,255,0.1);
+    border-color: rgba(0,229,255,0.25);
+  }
+  .indicator .idx {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    color: var(--cyan);
+    min-width: 22px;
+  }
+
+  /* color variants per part */
+  .part-1 .indicator .idx { color: var(--cyan); }
+  .part-2 .indicator .idx { color: #00f5a0; }
+  .part-3 .indicator .idx { color: var(--gold); }
+  .part-4 .indicator .idx { color: #ff9f43; }
+  .part-5 .indicator .idx { color: var(--pink); }
+  .part-6 .indicator .idx { color: var(--violet); }
+  .part-6 .indicator { border-color: rgba(123,47,255,0.15); background: rgba(123,47,255,0.05); }
+  .part-6 .indicator:hover { background: rgba(123,47,255,0.12); border-color: rgba(123,47,255,0.3); }
+  .part-5 .indicator { border-color: rgba(255,45,120,0.12); background: rgba(255,45,120,0.04); }
+  .part-5 .indicator:hover { background: rgba(255,45,120,0.1); border-color: rgba(255,45,120,0.25); }
+  .part-3 .indicator { border-color: rgba(255,209,102,0.12); background: rgba(255,209,102,0.04); }
+  .part-4 .indicator { border-color: rgba(255,159,67,0.12); background: rgba(255,159,67,0.04); }
+  .part-2 .indicator { border-color: rgba(0,245,160,0.12); background: rgba(0,245,160,0.04); }
+
+  /* ── FLOW DIAGRAM ── */
+  .flow-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .flow-container::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, rgba(0,229,255,0.03), transparent 70%);
+    pointer-events: none;
+  }
+
+  .flow-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .flow-node {
+    position: relative;
+    padding: 16px 20px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    text-align: center;
+    min-width: 120px;
+    transition: all 0.3s;
+  }
+  .flow-node:hover {
+    border-color: var(--cyan);
+    box-shadow: var(--glow-cyan);
+    z-index: 2;
+  }
+
+  .flow-node .node-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .flow-node .node-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    color: var(--cyan);
+    font-size: 18px;
+    opacity: 0.5;
+  }
+
+  .flow-accent {
+    border-color: rgba(0,229,255,0.4) !important;
+    background: rgba(0,229,255,0.06) !important;
+  }
+  .flow-accent .node-label { color: var(--cyan); }
+
+  .flow-warn {
+    border-color: rgba(255,45,120,0.3) !important;
+  }
+  .flow-warn .node-sub { color: var(--pink); }
+
+  /* ── TRUST GRID ── */
+  .trust-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+  }
+
+  .trust-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .trust-card-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .trust-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .trust-badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    padding: 3px 8px;
+    border-radius: 1px;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+  }
+  .badge-warn { background: rgba(255,45,120,0.15); color: var(--pink); border: 1px solid rgba(255,45,120,0.25); }
+  .badge-info { background: rgba(0,229,255,0.1); color: var(--cyan); border: 1px solid rgba(0,229,255,0.2); }
+  .badge-ok { background: rgba(0,245,160,0.1); color: #00f5a0; border: 1px solid rgba(0,245,160,0.2); }
+
+  .trust-desc {
+    font-size: 12px;
+    color: rgba(232,244,255,0.55);
+    line-height: 1.7;
+  }
+
+  .trust-card-num {
+    position: absolute;
+    top: 16px; right: 20px;
+    font-family: 'Orbitron', monospace;
+    font-size: 32px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.04);
+    letter-spacing: -2px;
+  }
+
+  /* ── ECOLOGY SECTION ── */
+  .ecology-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .eco-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 24px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .eco-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--violet), transparent);
+    opacity: 0.5;
+  }
+
+  .eco-idx {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    color: var(--violet);
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+  }
+  .eco-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    padding: 60px 0;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer-brand {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+    letter-spacing: 3px;
+  }
+
+  .footer-right {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.8;
+    letter-spacing: 2px;
+  }
+
+  /* ── SCAN LINE EFFECT ── */
+  @keyframes scanline {
+    0% { top: -5%; }
+    100% { top: 105%; }
+  }
+  .scanline {
+    position: fixed;
+    left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(0,229,255,0.08), transparent);
+    animation: scanline 8s linear infinite;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.7; }
+  }
+  @keyframes rotate-slow {
+    from { transform: translateY(-50%) rotate(0deg); }
+    to { transform: translateY(-50%) rotate(360deg); }
+  }
+
+  .fade-in { animation: fadeUp 0.8s ease forwards; }
+  .fade-in-2 { animation: fadeUp 0.8s 0.15s ease forwards; opacity: 0; }
+  .fade-in-3 { animation: fadeUp 0.8s 0.3s ease forwards; opacity: 0; }
+  .orb { animation: pulse-glow 6s ease-in-out infinite; }
+
+  /* Question notes */
+  .q-note {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--pink);
+    margin-top: 8px;
+    padding: 6px 12px;
+    border-left: 2px solid var(--pink);
+    background: rgba(255,45,120,0.05);
+    opacity: 0.8;
+    line-height: 1.6;
+  }
+
+  /* Divider line */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--cyan), var(--violet), transparent);
+    opacity: 0.2;
+    margin: 8px 0;
+  }
+
+  .stat-row {
+    display: flex;
+    gap: 2px;
+    margin-top: 2px;
+  }
+  .stat-box {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<div class="scanline"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="container">
+    <p class="hero-tag fade-in">產品中心 · 承攬制指標系統</p>
+    <h1 class="hero-title fade-in-2">
+      <span class="dim">WORKY</span><br>
+      <span class="accent">承攬制</span><br>
+      <span style="font-size:0.55em; color: rgba(232,244,255,0.5); letter-spacing:2px;">數據發想框架</span>
+    </h1>
+    <p class="hero-sub fade-in-3">營運週報 · 2026.05.21</p>
+    <div class="hero-meta fade-in-3">
+      <div class="meta-chip">系統指標 <span>28</span> 項</div>
+      <div class="meta-chip">分析維度 <span>6</span> 大類</div>
+      <div class="meta-chip">雙端追蹤 <span>發案者 / 接案者</span></div>
+    </div>
+
+    <!-- SVG node diagram -->
+    <svg class="hero-graphic" viewBox="0 0 380 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="nodeGrad1" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="nodeGrad2" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#7b2fff" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#7b2fff" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+          <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- Connection lines -->
+      <line x1="190" y1="190" x2="90" y2="90" stroke="#00e5ff" stroke-width="0.5" stroke-opacity="0.3"/>
+      <line x1="190" y1="190" x2="290" y2="90" stroke="#00e5ff" stroke-width="0.5" stroke-opacity="0.3"/>
+      <line x1="190" y1="190" x2="80" y2="270" stroke="#7b2fff" stroke-width="0.5" stroke-opacity="0.3"/>
+      <line x1="190" y1="190" x2="300" y2="270" stroke="#7b2fff" stroke-width="0.5" stroke-opacity="0.3"/>
+      <line x1="190" y1="190" x2="190" y2="60" stroke="#ffd166" stroke-width="0.5" stroke-opacity="0.3"/>
+      <line x1="190" y1="190" x2="190" y2="320" stroke="#ff2d78" stroke-width="0.5" stroke-opacity="0.3"/>
+      <!-- Outer ring -->
+      <circle cx="190" cy="190" r="120" stroke="#00e5ff" stroke-width="0.5" stroke-opacity="0.1" stroke-dasharray="6 4"/>
+      <circle cx="190" cy="190" r="80" stroke="#7b2fff" stroke-width="0.5" stroke-opacity="0.1" stroke-dasharray="3 6"/>
+      <!-- Center node -->
+      <circle cx="190" cy="190" r="36" fill="url(#nodeGrad1)" filter="url(#glow)"/>
+      <circle cx="190" cy="190" r="20" fill="#040810" stroke="#00e5ff" stroke-width="1.5"/>
+      <text x="190" y="186" text-anchor="middle" fill="#00e5ff" font-family="Orbitron" font-size="7" font-weight="700">承攬</text>
+      <text x="190" y="198" text-anchor="middle" fill="#00e5ff" font-family="Orbitron" font-size="7" font-weight="700">DATA</text>
+      <!-- Satellite nodes -->
+      <circle cx="90" cy="90" r="28" fill="url(#nodeGrad1)" filter="url(#glow)"/>
+      <circle cx="90" cy="90" r="16" fill="#040810" stroke="#00e5ff" stroke-width="1"/>
+      <text x="90" y="87" text-anchor="middle" fill="#00e5ff" font-family="Noto Sans TC" font-size="8">成效</text>
+      <text x="90" y="98" text-anchor="middle" fill="#00e5ff" font-family="Noto Sans TC" font-size="8">檢視</text>
+      <circle cx="290" cy="90" r="28" fill="url(#nodeGrad1)"/>
+      <circle cx="290" cy="90" r="16" fill="#040810" stroke="#00b4d8" stroke-width="1"/>
+      <text x="290" y="87" text-anchor="middle" fill="#00b4d8" font-family="Noto Sans TC" font-size="8">實收</text>
+      <text x="290" y="98" text-anchor="middle" fill="#00b4d8" font-family="Noto Sans TC" font-size="8">狀況</text>
+      <circle cx="80" cy="270" r="28" fill="url(#nodeGrad2)"/>
+      <circle cx="80" cy="270" r="16" fill="#040810" stroke="#7b2fff" stroke-width="1"/>
+      <text x="80" y="267" text-anchor="middle" fill="#7b2fff" font-family="Noto Sans TC" font-size="8">發案</text>
+      <text x="80" y="278" text-anchor="middle" fill="#7b2fff" font-family="Noto Sans TC" font-size="8">流程</text>
+      <circle cx="300" cy="270" r="28" fill="url(#nodeGrad2)"/>
+      <circle cx="300" cy="270" r="16" fill="#040810" stroke="#ff2d78" stroke-width="1"/>
+      <text x="300" y="267" text-anchor="middle" fill="#ff2d78" font-family="Noto Sans TC" font-size="8">信任</text>
+      <text x="300" y="278" text-anchor="middle" fill="#ff2d78" font-family="Noto Sans TC" font-size="8">狀態</text>
+      <circle cx="190" cy="60" r="24" fill="rgba(255,209,102,0.1)"/>
+      <circle cx="190" cy="60" r="14" fill="#040810" stroke="#ffd166" stroke-width="1"/>
+      <text x="190" y="57" text-anchor="middle" fill="#ffd166" font-family="Noto Sans TC" font-size="8">老新</text>
+      <text x="190" y="68" text-anchor="middle" fill="#ffd166" font-family="Noto Sans TC" font-size="8">比</text>
+      <circle cx="190" cy="320" r="24" fill="rgba(123,47,255,0.1)"/>
+      <circle cx="190" cy="320" r="14" fill="#040810" stroke="#a855f7" stroke-width="1"/>
+      <text x="190" y="317" text-anchor="middle" fill="#a855f7" font-family="Noto Sans TC" font-size="8">生態</text>
+      <text x="190" y="328" text-anchor="middle" fill="#a855f7" font-family="Noto Sans TC" font-size="8">分布</text>
+      <!-- Pulse rings -->
+      <circle cx="190" cy="190" r="46" stroke="#00e5ff" stroke-width="0.5" stroke-opacity="0.15">
+        <animate attributeName="r" values="36;60;36" dur="4s" repeatCount="indefinite"/>
+        <animate attributeName="stroke-opacity" values="0.2;0;0.2" dur="4s" repeatCount="indefinite"/>
+      </circle>
+    </svg>
+  </div>
+</section>
+
+<!-- ── SECTION 1: ARCHITECTURE ── -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">SECTION 01</p>
+    <h2 class="section-title">承攬制數據架構</h2>
+    <p class="section-note">// 6 大分析維度</p>
+
+    <div class="arch-grid">
+      <div class="arch-card">
+        <div class="arch-card-num">PART.01</div>
+        <div class="arch-card-title">成效檢視</div>
+        <ul class="arch-items">
+          <li>需求端數量</li>
+          <li>供給端數量</li>
+        </ul>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-num">PART.02</div>
+        <div class="arch-card-title">實收狀況</div>
+        <ul class="arch-items">
+          <li>媒合成效</li>
+          <li>完工時數</li>
+        </ul>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-num">PART.03</div>
+        <div class="arch-card-title">發案流程 / 費用機制</div>
+        <ul class="arch-items">
+          <li>有發案者資格</li>
+          <li>實際需求轉換</li>
+        </ul>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-num">PART.04</div>
+        <div class="arch-card-title" style="color:var(--gold)">老新比</div>
+        <ul class="arch-items">
+          <li>是否吸引新 TA</li>
+          <li>新用戶完工經驗</li>
+        </ul>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-num">PART.05</div>
+        <div class="arch-card-title" style="color:var(--pink)">雙端信任狀態</div>
+        <ul class="arch-items">
+          <li>取消與放鳥</li>
+          <li>駁回率分析</li>
+          <li>雙方回饋評價</li>
+        </ul>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-num">PART.06</div>
+        <div class="arch-card-title" style="color:#a855f7">平台生態喜好分布</div>
+        <ul class="arch-items">
+          <li>任務類型 · 薪資 · 工時</li>
+          <li>供需比 · 地區</li>
+          <li>申請 / 媒合效率</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 2: FULL METRICS ── -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">SECTION 02</p>
+    <h2 class="section-title">承攬制數據指標總攬</h2>
+    <p class="section-note">// 完整 28 項指標系統</p>
+
+    <div class="metrics-parts">
+
+      <div class="part-block part-1">
+        <div class="part-header">
+          <div class="part-label">
+            <div class="part-num">PART 01</div>
+            <div class="part-name">成效檢視</div>
+          </div>
+          <div class="part-indicators">
+            <div class="indicator"><span class="idx">01</span>招募需求人數</div>
+            <div class="indicator"><span class="idx">02</span>招募需求時數</div>
+            <div class="indicator"><span class="idx">03</span>發案者人數</div>
+            <div class="indicator"><span class="idx">04</span>接案申請人數</div>
+            <div class="indicator"><span class="idx">05</span>接案申請次數</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="part-block part-2">
+        <div class="part-header">
+          <div class="part-label">
+            <div class="part-num">PART 02</div>
+            <div class="part-name" style="color:#00f5a0">實收狀況</div>
+          </div>
+          <div class="part-indicators">
+            <div class="indicator"><span class="idx">06</span>接案媒合人數</div>
+            <div class="indicator"><span class="idx">07</span>接案完工人數</div>
+            <div class="indicator"><span class="idx">08</span>接案完工時數</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="part-block part-3">
+        <div class="part-header">
+          <div class="part-label">
+            <div class="part-num">PART 03</div>
+            <div class="part-name" style="color:var(--gold)">發案流程 · 費用機制</div>
+          </div>
+          <div class="part-indicators">
+            <div class="indicator"><span class="idx">09</span>可發案者人數（有填寫付款管道）</div>
+            <div class="indicator"><span class="idx">10</span>實際發案者人數</div>
+            <div class="indicator"><span class="idx">11</span>轉換率 (09 → 10)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="part-block part-4">
+        <div class="part-header">
+          <div class="part-label">
+            <div class="part-num">PART 04</div>
+            <div class="part-name" style="color:#ff9f43">老新比</div>
+          </div>
+          <div class="part-indicators">
+            <div class="indicator"><span class="idx">12</span>發案者平均完工數 · 評分</div>
+            <div class="indicator"><span class="idx">13</span>發案者是否為新用戶（無完工經驗）</div>
+            <div class="indicator"><span class="idx">14</span>新使用者占比分析（04 · 05 占比）</div>
+            <div class="indicator"><span class="idx">15</span>接案申請人數</div>
+            <div class="indicator"><span class="idx">16</span>新註冊 / 無完工經驗接案人</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="part-block part-5">
+        <div class="part-header">
+          <div class="part-label">
+            <div class="part-num">PART 05</div>
+            <div class="part-name" style="color:var(--pink)">雙端信任狀態</div>
+          </div>
+          <div class="part-indicators">
+            <div class="indicator"><span class="idx">17</span>一般取消（雙端）</div>
+            <div class="indicator"><span class="idx">18</span>臨時取消（雙端）</div>
+            <div class="indicator"><span class="idx">19</span>放鳥（接案端）</div>
+            <div class="indicator"><span class="idx">20</span>駁回率分析（含自動駁回）</div>
+            <div class="indicator"><span class="idx">21</span>接案後雙方評價</div>
+            <div class="indicator"><span class="idx">22</span>確認 DB Table</div>
+          </div>
+        </div>
+        <div class="q-note" style="margin:0 16px 16px">
+          ⚠ 問題：發案者在任務時間後72小時沒有結案 → 視為駁回？
+        </div>
+      </div>
+
+      <div class="part-block part-6">
+        <div class="part-header">
+          <div class="part-label">
+            <div class="part-num">PART 06</div>
+            <div class="part-name" style="color:#a855f7">平台生態分布</div>
+          </div>
+          <div class="part-indicators">
+            <div class="indicator"><span class="idx">23</span>任務類型數</div>
+            <div class="indicator"><span class="idx">24</span>平均薪水分布</div>
+            <div class="indicator"><span class="idx">25</span>平均工時分布</div>
+            <div class="indicator"><span class="idx">26</span>供需比</div>
+            <div class="indicator"><span class="idx">27</span>地區需求 · 申請 · 媒合分布</div>
+            <div class="indicator"><span class="idx">28</span>最搶手任務類型（申請 → 媒合速度）</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 3: CONVERSION FLOW ── -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">SECTION 03</p>
+    <h2 class="section-title">承攬制轉換漏斗</h2>
+    <p class="section-note">// 從需求到完工的完整鏈路</p>
+
+    <div class="flow-container">
+      <div class="flow-row">
+        <div class="flow-node flow-accent">
+          <div class="node-label">招募需求</div>
+          <div class="node-sub">需求端 · 發案</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">
+          <div class="node-label">可發案資格</div>
+          <div class="node-sub">填寫付款管道</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">
+          <div class="node-label">實際發案</div>
+          <div class="node-sub">轉換率觀測</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">
+          <div class="node-label">接案申請</div>
+          <div class="node-sub">供給端 · 申請</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="flow-row">
+        <div class="flow-node">
+          <div class="node-label">媒合配對</div>
+          <div class="node-sub">雙端匹配</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node flow-warn">
+          <div class="node-label">執行中</div>
+          <div class="node-sub">取消 · 放鳥監控</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node flow-accent">
+          <div class="node-label">完工結案</div>
+          <div class="node-sub">時數 · 評價</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="border-color:rgba(255,209,102,0.3)">
+          <div class="node-label" style="color:var(--gold)">數據回饋</div>
+          <div class="node-sub">生態分析</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 4: TRUST ── -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">SECTION 04</p>
+    <h2 class="section-title">雙端信任監測矩陣</h2>
+    <p class="section-note">// 目前只是沒有顯示，但可先看取消狀態</p>
+
+    <div class="trust-grid">
+      <div class="trust-card">
+        <div class="trust-card-num">17</div>
+        <span class="trust-card-icon">📋</span>
+        <div class="trust-badge badge-info">METRIC 17 · 18</div>
+        <div class="trust-card-title">取消事件追蹤</div>
+        <div class="trust-desc">
+          一般取消 vs 臨時取消，雙端行為分佈分析，監測違約傾向與供需不穩定性。
+        </div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-card-num">19</div>
+        <span class="trust-card-icon">🚫</span>
+        <div class="trust-badge badge-warn">METRIC 19</div>
+        <div class="trust-card-title">放鳥（接案端）</div>
+        <div class="trust-desc">
+          接案者確認後未出席，嚴重影響發案者體驗與平台信任。需獨立追蹤發生頻率與重複者。
+        </div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-card-num">20</div>
+        <span class="trust-card-icon">⚠️</span>
+        <div class="trust-badge badge-warn">METRIC 20</div>
+        <div class="trust-card-title">駁回率分析</div>
+        <div class="trust-desc">
+          區分主動駁回與超過時間上限的<strong style="color:var(--pink)">自動駁回</strong>。追蹤目前機制是否適合目前使用者生態。
+        </div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-card-num">21</div>
+        <span class="trust-card-icon">⭐</span>
+        <div class="trust-badge badge-ok">METRIC 21 · 22</div>
+        <div class="trust-card-title">雙方評價回饋</div>
+        <div class="trust-desc">
+          接案完工後雙端評分系統，同步確認 聊聊 以補全信任鏈路數據。
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 5: ECOLOGY ── -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">SECTION 05</p>
+    <h2 class="section-title">平台生態喜好流動分布</h2>
+    <p class="section-note">// 指標 23 — 28 · 任務類型生態系分析</p>
+
+    <div class="ecology-grid">
+      <div class="eco-card">
+        <div class="eco-idx">23</div>
+        <div class="eco-title">任務類型數</div>
+      </div>
+      <div class="eco-card">
+        <div class="eco-idx">24</div>
+        <div class="eco-title">任務類型<br>平均薪水分布</div>
+      </div>
+      <div class="eco-card">
+        <div class="eco-idx">25</div>
+        <div class="eco-title">任務類型<br>平均工時分布</div>
+      </div>
+      <div class="eco-card">
+        <div class="eco-idx">26</div>
+        <div class="eco-title">任務類型<br>供需比</div>
+      </div>
+      <div class="eco-card">
+        <div class="eco-idx">27</div>
+        <div class="eco-title">地區需求<br>申請 · 媒合分布</div>
+      </div>
+      <div class="eco-card" style="border-color:rgba(123,47,255,0.3);">
+        <div class="eco-idx" style="color:var(--pink)">28</div>
+        <div class="eco-title" style="color:rgba(232,244,255,0.9)">最搶手任務<br>申請 → 媒合速度</div>
+      </div>
+    </div>
+
+    <div class="stat-row" style="margin-top:2px;">
+      <div class="stat-box">
+        <span class="stat-num">6</span>
+        <span class="stat-label">分析維度</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-num" style="color:#00f5a0; text-shadow:0 0 20px rgba(0,245,160,0.3)">28</span>
+        <span class="stat-label">總指標數</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-num" style="color:var(--gold); text-shadow:0 0 20px rgba(255,209,102,0.3)">2</span>
+        <span class="stat-label">端點追蹤</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-num" style="color:var(--pink); text-shadow:0 0 20px rgba(255,45,120,0.3)">5</span>
+        <span class="stat-label">信任指標</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="container" style="display:flex;justify-content:space-between;align-items:center;width:100%">
+    <div class="footer-brand">WORKY</div>
+    <div class="footer-right">
+      產品中心<br>
+      承攬制數據發想<br>
+      2026 · 05 · 21
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
