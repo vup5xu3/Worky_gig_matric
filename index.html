@@ -33,7 +33,6 @@
     position: relative;
   }
 
-  /* Grid bg */
   body::before {
     content: '';
     position: fixed;
@@ -46,7 +45,6 @@
     z-index: 0;
   }
 
-  /* Ambient glow orbs */
   .orb {
     position: fixed;
     border-radius: 50%;
@@ -67,7 +65,6 @@
     z-index: 1;
   }
 
-  /* ── HERO ── */
   .hero {
     min-height: 100vh;
     display: flex;
@@ -133,7 +130,6 @@
   }
   .meta-chip span { color: var(--cyan); }
 
-  /* Floating node diagram for hero */
   .hero-graphic {
     position: absolute;
     right: 0; top: 50%;
@@ -142,7 +138,6 @@
     opacity: 0.7;
   }
 
-  /* ── SECTION HEADING ── */
   .section {
     padding: 80px 0;
     border-top: 1px solid var(--border);
@@ -174,7 +169,6 @@
     margin-bottom: 48px;
   }
 
-  /* ── ARCHITECTURE OVERVIEW ── */
   .arch-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -240,7 +234,6 @@
     opacity: 0.6;
   }
 
-  /* ── METRICS TABLE ── */
   .metrics-parts {
     display: flex;
     flex-direction: column;
@@ -315,7 +308,6 @@
     min-width: 22px;
   }
 
-  /* color variants per part */
   .part-1 .indicator .idx { color: var(--cyan); }
   .part-2 .indicator .idx { color: #00f5a0; }
   .part-3 .indicator .idx { color: var(--gold); }
@@ -330,7 +322,6 @@
   .part-4 .indicator { border-color: rgba(255,159,67,0.12); background: rgba(255,159,67,0.04); }
   .part-2 .indicator { border-color: rgba(0,245,160,0.12); background: rgba(0,245,160,0.04); }
 
-  /* ── FLOW DIAGRAM ── */
   .flow-container {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -404,7 +395,6 @@
   }
   .flow-warn .node-sub { color: var(--pink); }
 
-  /* ── TRUST GRID ── */
   .trust-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -462,7 +452,6 @@
     letter-spacing: -2px;
   }
 
-  /* ── ECOLOGY SECTION ── */
   .ecology-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -499,6 +488,127 @@
     line-height: 1.4;
   }
 
+  /* ── NAV CARDS ── */
+  .nav-card-link {
+    text-decoration: none;
+    display: block;
+  }
+  .nav-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 40px 32px;
+    cursor: pointer;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  }
+  .nav-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--violet));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s;
+  }
+  .nav-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 20% 80%, rgba(0,229,255,0.04), transparent 60%);
+    pointer-events: none;
+  }
+  .nav-card:hover {
+    border-color: rgba(0,229,255,0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 40px rgba(0,229,255,0.08);
+  }
+  .nav-card:hover::before { transform: scaleX(1); }
+
+  .nav-card.violet-variant {
+    border-color: rgba(123,47,255,0.2);
+    background: rgba(123,47,255,0.03);
+  }
+  .nav-card.violet-variant::before {
+    background: linear-gradient(90deg, var(--violet), var(--pink));
+  }
+  .nav-card.violet-variant::after {
+    background: radial-gradient(ellipse at 20% 80%, rgba(123,47,255,0.05), transparent 60%);
+  }
+  .nav-card.violet-variant:hover {
+    border-color: rgba(123,47,255,0.5);
+    box-shadow: 0 8px 40px rgba(123,47,255,0.1);
+  }
+
+  .nav-card-report-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+  }
+  .nav-card.violet-variant .nav-card-report-num { color: rgba(123,47,255,0.6); }
+
+  .nav-card-icon { font-size: 32px; margin-bottom: 16px; display: block; }
+
+  .nav-card-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--cyan);
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+  }
+  .nav-card.violet-variant .nav-card-title { color: var(--violet); }
+
+  .nav-card-desc {
+    font-size: 12px;
+    color: rgba(232,244,255,0.45);
+    line-height: 1.8;
+  }
+
+  .nav-card-cta {
+    margin-top: 28px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nav-card-cta-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--cyan);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .nav-card.violet-variant .nav-card-cta-text { color: var(--violet); }
+  .nav-card-cta-arrow {
+    color: var(--cyan);
+    font-size: 16px;
+    opacity: 0.6;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+  .nav-card.violet-variant .nav-card-cta-arrow { color: var(--violet); }
+  .nav-card:hover .nav-card-cta-arrow { transform: translateX(4px); opacity: 1; }
+
+  /* corner decoration */
+  .nav-card-corner {
+    position: absolute;
+    bottom: 20px; right: 24px;
+    font-family: 'Orbitron', monospace;
+    font-size: 56px;
+    font-weight: 900;
+    color: rgba(0,229,255,0.04);
+    letter-spacing: -4px;
+    pointer-events: none;
+    user-select: none;
+  }
+  .nav-card.violet-variant .nav-card-corner { color: rgba(123,47,255,0.06); }
+
   /* ── FOOTER ── */
   .footer {
     padding: 60px 0;
@@ -528,7 +638,6 @@
     letter-spacing: 2px;
   }
 
-  /* ── SCAN LINE EFFECT ── */
   @keyframes scanline {
     0% { top: -5%; }
     100% { top: 105%; }
@@ -543,7 +652,6 @@
     z-index: 999;
   }
 
-  /* ── ANIMATIONS ── */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(24px); }
     to { opacity: 1; transform: translateY(0); }
@@ -552,17 +660,12 @@
     0%, 100% { opacity: 0.4; }
     50% { opacity: 0.7; }
   }
-  @keyframes rotate-slow {
-    from { transform: translateY(-50%) rotate(0deg); }
-    to { transform: translateY(-50%) rotate(360deg); }
-  }
 
   .fade-in { animation: fadeUp 0.8s ease forwards; }
   .fade-in-2 { animation: fadeUp 0.8s 0.15s ease forwards; opacity: 0; }
   .fade-in-3 { animation: fadeUp 0.8s 0.3s ease forwards; opacity: 0; }
   .orb { animation: pulse-glow 6s ease-in-out infinite; }
 
-  /* Question notes */
   .q-note {
     font-family: 'Space Mono', monospace;
     font-size: 10px;
@@ -575,7 +678,6 @@
     line-height: 1.6;
   }
 
-  /* Divider line */
   .divider {
     width: 100%;
     height: 1px;
@@ -635,7 +737,6 @@
       <div class="meta-chip">雙端追蹤 <span>發案者 / 接案者</span></div>
     </div>
 
-    <!-- SVG node diagram -->
     <svg class="hero-graphic" viewBox="0 0 380 380" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <radialGradient id="nodeGrad1" cx="50%" cy="50%" r="50%">
@@ -651,22 +752,18 @@
           <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
       </defs>
-      <!-- Connection lines -->
       <line x1="190" y1="190" x2="90" y2="90" stroke="#00e5ff" stroke-width="0.5" stroke-opacity="0.3"/>
       <line x1="190" y1="190" x2="290" y2="90" stroke="#00e5ff" stroke-width="0.5" stroke-opacity="0.3"/>
       <line x1="190" y1="190" x2="80" y2="270" stroke="#7b2fff" stroke-width="0.5" stroke-opacity="0.3"/>
       <line x1="190" y1="190" x2="300" y2="270" stroke="#7b2fff" stroke-width="0.5" stroke-opacity="0.3"/>
       <line x1="190" y1="190" x2="190" y2="60" stroke="#ffd166" stroke-width="0.5" stroke-opacity="0.3"/>
       <line x1="190" y1="190" x2="190" y2="320" stroke="#ff2d78" stroke-width="0.5" stroke-opacity="0.3"/>
-      <!-- Outer ring -->
       <circle cx="190" cy="190" r="120" stroke="#00e5ff" stroke-width="0.5" stroke-opacity="0.1" stroke-dasharray="6 4"/>
       <circle cx="190" cy="190" r="80" stroke="#7b2fff" stroke-width="0.5" stroke-opacity="0.1" stroke-dasharray="3 6"/>
-      <!-- Center node -->
       <circle cx="190" cy="190" r="36" fill="url(#nodeGrad1)" filter="url(#glow)"/>
       <circle cx="190" cy="190" r="20" fill="#040810" stroke="#00e5ff" stroke-width="1.5"/>
       <text x="190" y="186" text-anchor="middle" fill="#00e5ff" font-family="Orbitron" font-size="7" font-weight="700">承攬</text>
       <text x="190" y="198" text-anchor="middle" fill="#00e5ff" font-family="Orbitron" font-size="7" font-weight="700">DATA</text>
-      <!-- Satellite nodes -->
       <circle cx="90" cy="90" r="28" fill="url(#nodeGrad1)" filter="url(#glow)"/>
       <circle cx="90" cy="90" r="16" fill="#040810" stroke="#00e5ff" stroke-width="1"/>
       <text x="90" y="87" text-anchor="middle" fill="#00e5ff" font-family="Noto Sans TC" font-size="8">成效</text>
@@ -691,7 +788,6 @@
       <circle cx="190" cy="320" r="14" fill="#040810" stroke="#a855f7" stroke-width="1"/>
       <text x="190" y="317" text-anchor="middle" fill="#a855f7" font-family="Noto Sans TC" font-size="8">生態</text>
       <text x="190" y="328" text-anchor="middle" fill="#a855f7" font-family="Noto Sans TC" font-size="8">分布</text>
-      <!-- Pulse rings -->
       <circle cx="190" cy="190" r="46" stroke="#00e5ff" stroke-width="0.5" stroke-opacity="0.15">
         <animate attributeName="r" values="36;60;36" dur="4s" repeatCount="indefinite"/>
         <animate attributeName="stroke-opacity" values="0.2;0;0.2" dur="4s" repeatCount="indefinite"/>
@@ -699,6 +795,58 @@
     </svg>
   </div>
 </section>
+
+<!-- ── SECTION 6: REPORT NAV ── -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">SECTION 06</p>
+    <h2 class="section-title">報告檢視入口</h2>
+    <p class="section-note">// 點擊前往對應報告文件</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">
+
+      <!-- 月報模板 -->
+      <a href="worky-june-report.html" class="nav-card-link" target="_blank">
+        <div class="nav-card">
+          <div>
+            <div class="nav-card-report-num">REPORT · 01</div>
+            <span class="nav-card-icon">📊</span>
+            <div class="nav-card-title">月報模板檢視</div>
+            <div class="nav-card-desc">
+              承攬制月報標準模板<br>含 30 項指標呈現格式與欄位說明
+            </div>
+          </div>
+          <div class="nav-card-cta">
+            <span class="nav-card-cta-text">OPEN REPORT</span>
+            <span class="nav-card-cta-arrow">→</span>
+          </div>
+          <div class="nav-card-corner">R1</div>
+        </div>
+      </a>
+
+      <!-- 深度分析報告 -->
+      <a href="aaa.html" class="nav-card-link" target="_blank">
+        <div class="nav-card violet-variant">
+          <div>
+            <div class="nav-card-report-num">REPORT · 02</div>
+            <span class="nav-card-icon">🔍</span>
+            <div class="nav-card-title">深度分析報告</div>
+            <div class="nav-card-desc">
+              信任指標 · 生態分布 · 漏斗轉換<br>完整跨維度深度解析
+            </div>
+          </div>
+          <div class="nav-card-cta">
+            <span class="nav-card-cta-text">OPEN REPORT</span>
+            <span class="nav-card-cta-arrow">→</span>
+          </div>
+          <div class="nav-card-corner">R2</div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
 
 <!-- ── SECTION 1: ARCHITECTURE ── -->
 <section class="section">
@@ -1006,7 +1154,7 @@
         <div class="eco-title">地區需求<br>申請 · 媒合分布</div>
       </div>
       <div class="eco-card" style="border-color:rgba(123,47,255,0.3);">
-        <div class="eco-idx" style="color:var(--pink)">28</div>
+        <div class="eco-idx" style="color:var(--pink)">30</div>
         <div class="eco-title" style="color:rgba(232,244,255,0.9)">最搶手任務<br>申請 → 媒合速度</div>
       </div>
     </div>
@@ -1017,7 +1165,7 @@
         <span class="stat-label">分析維度</span>
       </div>
       <div class="stat-box">
-        <span class="stat-num" style="color:#00f5a0; text-shadow:0 0 20px rgba(0,245,160,0.3)">28</span>
+        <span class="stat-num" style="color:#00f5a0; text-shadow:0 0 20px rgba(0,245,160,0.3)">30</span>
         <span class="stat-label">總指標數</span>
       </div>
       <div class="stat-box">

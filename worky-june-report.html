@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Worky 承攬制月報 — 2026.06</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #040810;
+    --surface: #070e1c;
+    --surface2: #0b1528;
+    --cyan: #00e5ff;
+    --teal: #00b4d8;
+    --violet: #7b2fff;
+    --pink: #ff2d78;
+    --gold: #ffd166;
+    --green: #00f5a0;
+    --orange: #ff9f43;
+    --text: #e8f4ff;
+    --muted: #5a7a9a;
+    --grid: rgba(0, 229, 255, 0.04);
+    --border: rgba(0, 229, 255, 0.12);
+    --glow-cyan: 0 0 20px rgba(0, 229, 255, 0.3);
+    --glow-violet: 0 0 20px rgba(123, 47, 255, 0.4);
+    --glow-gold: 0 0 20px rgba(255, 209, 102, 0.3);
+    --glow-green: 0 0 20px rgba(0, 245, 160, 0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans TC', sans-serif;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+    animation: pulse-glow 6s ease-in-out infinite;
+  }
+  .orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, #7b2fff44, transparent 70%); top: -200px; right: -100px; opacity: 0.4; }
+  .orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, #00e5ff33, transparent 70%); bottom: 10%; left: -150px; opacity: 0.4; animation-delay: 2s; }
+  .orb-3 { width: 300px; height: 300px; background: radial-gradient(circle, #ff2d7822, transparent 70%); top: 50%; left: 40%; opacity: 0.3; animation-delay: 4s; }
+
+  @keyframes pulse-glow { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.7; } }
+  @keyframes scanline { 0% { top: -5%; } 100% { top: 105%; } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes drawBar { from { height: 0; } to { height: var(--h); } }
+  @keyframes drawLine { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
+  @keyframes spin-ring { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes counter { from { opacity: 0; } to { opacity: 1; } }
+
+  .scanline {
+    position: fixed;
+    left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(0,229,255,0.06), transparent);
+    animation: scanline 10s linear infinite;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  .container {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 36px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── HERO HEADER ── */
+  .report-header {
+    padding: 60px 0 48px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .header-left {}
+  .brand-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 5px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .brand-tag::before { content: ''; display: inline-block; width: 32px; height: 1px; background: var(--cyan); box-shadow: var(--glow-cyan); }
+
+  .report-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(32px, 5vw, 60px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -1px;
+  }
+  .report-title .accent { color: var(--cyan); text-shadow: var(--glow-cyan); }
+  .report-title .sub { font-size: 0.45em; color: rgba(232,244,255,0.4); letter-spacing: 3px; display: block; margin-top: 8px; font-weight: 400; }
+
+  .header-right {
+    text-align: right;
+  }
+  .header-chips { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+  .chip {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    background: rgba(0,229,255,0.02);
+  }
+  .chip span { color: var(--cyan); }
+
+  /* ── KPI STRIP ── */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 2px;
+    margin: 48px 0 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+    animation: fadeUp 0.6s ease forwards;
+    opacity: 0;
+  }
+  .kpi-card:nth-child(1) { animation-delay: 0.05s; }
+  .kpi-card:nth-child(2) { animation-delay: 0.1s; }
+  .kpi-card:nth-child(3) { animation-delay: 0.15s; }
+  .kpi-card:nth-child(4) { animation-delay: 0.2s; }
+  .kpi-card:nth-child(5) { animation-delay: 0.25s; }
+  .kpi-card:nth-child(6) { animation-delay: 0.3s; }
+  .kpi-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .kpi-card.c1::after { background: var(--cyan); box-shadow: var(--glow-cyan); }
+  .kpi-card.c2::after { background: var(--green); box-shadow: var(--glow-green); }
+  .kpi-card.c3::after { background: var(--gold); box-shadow: var(--glow-gold); }
+  .kpi-card.c4::after { background: var(--orange); }
+  .kpi-card.c5::after { background: var(--pink); }
+  .kpi-card.c6::after { background: var(--violet); box-shadow: var(--glow-violet); }
+  .kpi-card:hover { border-color: rgba(0,229,255,0.3); }
+
+  .kpi-val {
+    font-family: 'Orbitron', monospace;
+    font-size: 26px;
+    font-weight: 900;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .kpi-card.c1 .kpi-val { color: var(--cyan); text-shadow: var(--glow-cyan); }
+  .kpi-card.c2 .kpi-val { color: var(--green); text-shadow: var(--glow-green); }
+  .kpi-card.c3 .kpi-val { color: var(--gold); text-shadow: var(--glow-gold); }
+  .kpi-card.c4 .kpi-val { color: var(--orange); }
+  .kpi-card.c5 .kpi-val { color: var(--pink); }
+  .kpi-card.c6 .kpi-val { color: var(--violet); text-shadow: var(--glow-violet); }
+
+  .kpi-label { font-size: 10px; color: var(--muted); letter-spacing: 1px; line-height: 1.5; }
+  .kpi-delta {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    margin-top: 6px;
+    display: block;
+  }
+  .up { color: var(--green); }
+  .down { color: var(--pink); }
+
+  /* ── SECTION ── */
+  .section {
+    padding: 72px 0;
+    border-top: 1px solid var(--border);
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 5px;
+    color: var(--violet);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .section-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(18px, 2.5vw, 28px);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .section-note {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 40px;
+  }
+
+  /* ── CHART CONTAINERS ── */
+  .chart-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+  .chart-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2px;
+  }
+  .chart-grid-full {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .chart-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.8s ease forwards;
+    opacity: 0;
+  }
+  .chart-box:nth-child(1) { animation-delay: 0.1s; }
+  .chart-box:nth-child(2) { animation-delay: 0.2s; }
+  .chart-box:nth-child(3) { animation-delay: 0.3s; }
+
+  .chart-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--violet));
+    opacity: 0.6;
+  }
+
+  .chart-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .chart-title .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+  }
+  .dot-cyan { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+  .dot-green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .dot-gold { background: var(--gold); box-shadow: 0 0 6px var(--gold); }
+  .dot-pink { background: var(--pink); box-shadow: 0 0 6px var(--pink); }
+  .dot-violet { background: var(--violet); }
+  .dot-orange { background: var(--orange); }
+
+  /* ── BAR CHART ── */
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 180px;
+    padding: 0 4px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .bar-chart::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Horizontal guide lines */
+  .bar-guides {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .bar-guide {
+    position: absolute;
+    left: 0; right: 0;
+    height: 1px;
+    background: rgba(0,229,255,0.05);
+  }
+  .bar-guide-label {
+    position: absolute;
+    right: 4px;
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    color: rgba(90,122,154,0.5);
+    transform: translateY(-50%);
+  }
+
+  .bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    height: 100%;
+  }
+
+  .bar-wrap {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1;
+    gap: 2px;
+  }
+
+  .bar {
+    width: 70%;
+    border-radius: 1px 1px 0 0;
+    position: relative;
+    transition: opacity 0.3s;
+    animation: growBar 1s ease forwards;
+    transform-origin: bottom;
+  }
+
+  @keyframes growBar {
+    from { transform: scaleY(0); opacity: 0; }
+    to { transform: scaleY(1); opacity: 1; }
+  }
+
+  .bar:hover { opacity: 0.8; }
+
+  .bar-val {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    color: rgba(232,244,255,0.5);
+    margin-bottom: 2px;
+    white-space: nowrap;
+  }
+
+  .bar-xlbl {
+    font-size: 9px;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+    white-space: nowrap;
+  }
+
+  /* ── PIE CHART ── */
+  .pie-wrap {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+
+  .pie-svg-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .pie-legend {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 140px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 1px;
+    flex-shrink: 0;
+  }
+  .legend-name {
+    font-size: 11px;
+    color: rgba(232,244,255,0.7);
+    flex: 1;
+  }
+  .legend-pct {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    color: var(--text);
+  }
+
+  /* ── LINE CHART ── */
+  .line-chart-wrap {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .line-chart-svg {
+    width: 100%;
+    overflow: visible;
+  }
+
+  .line-path {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: drawLine 2s ease forwards;
+    animation-delay: 0.3s;
+  }
+
+  .line-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding: 0 8px;
+  }
+  .line-lbl {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* ── FUNNEL ── */
+  .funnel-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .funnel-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .funnel-label {
+    font-size: 11px;
+    color: var(--muted);
+    width: 110px;
+    flex-shrink: 0;
+    text-align: right;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.5px;
+    font-size: 10px;
+  }
+  .funnel-bar-outer {
+    flex: 1;
+    height: 28px;
+    background: rgba(0,229,255,0.04);
+    border: 1px solid rgba(0,229,255,0.08);
+    position: relative;
+    overflow: hidden;
+  }
+  .funnel-bar-inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    position: relative;
+    animation: growBar 1s ease forwards;
+    transform-origin: left;
+  }
+  .funnel-pct {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    width: 50px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .funnel-arrow {
+    display: flex;
+    align-items: center;
+    padding-left: 122px;
+    color: rgba(0,229,255,0.2);
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin: -2px 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+  }
+
+  /* ── TRUST HEATMAP ── */
+  .trust-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .trust-table th {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-weight: 400;
+    text-transform: uppercase;
+  }
+  .trust-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(0,229,255,0.04);
+    font-size: 12px;
+  }
+  .trust-table tr:hover td { background: rgba(0,229,255,0.03); }
+  .trust-table .metric-name { color: rgba(232,244,255,0.7); }
+  .trust-table .metric-val {
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    text-align: center;
+  }
+  .trust-table .metric-bar-cell { padding: 10px 12px; min-width: 120px; }
+  .mini-bar-outer { height: 4px; background: rgba(0,229,255,0.06); border-radius: 0; overflow: hidden; }
+  .mini-bar-inner { height: 100%; border-radius: 0; animation: growBar 1s ease forwards; transform-origin: left; }
+
+  .badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    padding: 2px 8px;
+    letter-spacing: 2px;
+  }
+  .badge-ok { background: rgba(0,245,160,0.1); color: var(--green); border: 1px solid rgba(0,245,160,0.2); }
+  .badge-warn { background: rgba(255,45,120,0.1); color: var(--pink); border: 1px solid rgba(255,45,120,0.2); }
+  .badge-mid { background: rgba(255,209,102,0.1); color: var(--gold); border: 1px solid rgba(255,209,102,0.2); }
+
+  /* ── ECOLOGY MATRIX ── */
+  .eco-matrix {
+    overflow-x: auto;
+  }
+  .eco-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .eco-table th {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    font-weight: 400;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .eco-table th:first-child { text-align: left; }
+  .eco-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(0,229,255,0.04);
+    text-align: center;
+    font-size: 12px;
+    vertical-align: middle;
+  }
+  .eco-table td:first-child { text-align: left; }
+  .eco-table tr:hover td { background: rgba(0,229,255,0.03); }
+
+  .task-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .task-icon { font-size: 16px; }
+
+  .speed-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: center;
+  }
+  .speed-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+
+  .rank-badge {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid;
+  }
+  .rank-1 { border-color: var(--gold); color: var(--gold); }
+  .rank-2 { border-color: rgba(232,244,255,0.3); color: rgba(232,244,255,0.5); }
+  .rank-3 { border-color: var(--orange); color: var(--orange); }
+  .rank-4 { border-color: rgba(90,122,154,0.4); color: var(--muted); }
+
+  /* ── REGION MAP ── */
+  .region-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+  }
+  .region-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 18px 16px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .region-card:hover { border-color: rgba(0,229,255,0.25); }
+  .region-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(232,244,255,0.8);
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+  }
+  .region-stats { display: flex; flex-direction: column; gap: 6px; }
+  .region-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+  }
+  .region-stat-label { color: var(--muted); font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 1px; }
+  .region-stat-val { font-family: 'Orbitron', monospace; font-size: 11px; }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--cyan), var(--violet), transparent);
+    opacity: 0.15;
+    margin: 8px 0;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    padding: 48px 0;
+    border-top: 1px solid var(--border);
+    position: relative;
+    z-index: 1;
+  }
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-brand {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+    letter-spacing: 4px;
+  }
+  .footer-info {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.9;
+    letter-spacing: 2px;
+  }
+
+  /* tooltip */
+  .tooltip-wrap { position: relative; }
+  .tooltip-wrap:hover .tooltip-popup { opacity: 1; pointer-events: auto; }
+  .tooltip-popup {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--cyan);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 10;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<div class="scanline"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- ── HEADER ── -->
+<div class="container">
+  <div class="report-header">
+    <div class="header-left">
+      <p class="brand-tag">WORKY 承攬制 · 營運月報</p>
+      <h1 class="report-title">
+        <span class="accent">2026.06</span>
+        <span class="sub">MONTHLY DATA REPORT</span>
+      </h1>
+    </div>
+    <div class="header-right">
+      <div class="header-chips">
+        <div class="chip">統計週期 <span>2026.06.01 — 06.30</span></div>
+        <div class="chip">任務類型 <span>4</span> 大類</div>
+        <div class="chip">資料版本 <span>Ver 1.0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── KPI STRIP ── -->
+  <div class="kpi-strip">
+    <div class="kpi-card c1">
+      <span class="kpi-val">1,284</span>
+      <div class="kpi-label">招募需求人數<br>職缺數</div>
+      <span class="kpi-delta up">▲ +14.2% vs 5月</span>
+    </div>
+    <div class="kpi-card c2">
+      <span class="kpi-val">3,671</span>
+      <div class="kpi-label">接案申請次數<br>累計</div>
+      <span class="kpi-delta up">▲ +22.8% vs 5月</span>
+    </div>
+    <div class="kpi-card c3">
+      <span class="kpi-val">89.3%</span>
+      <div class="kpi-label">整體完工率<br>完工時率</div>
+      <span class="kpi-delta up">▲ +3.1% vs 5月</span>
+    </div>
+    <div class="kpi-card c4">
+      <span class="kpi-val">2.86</span>
+      <div class="kpi-label">承攬供需比<br>申請/職缺</div>
+      <span class="kpi-delta up">▲ +0.31 vs 5月</span>
+    </div>
+    <div class="kpi-card c5">
+      <span class="kpi-val">4.2%</span>
+      <div class="kpi-label">放鳥率<br>接案端</div>
+      <span class="kpi-delta down">▼ -0.8% vs 5月</span>
+    </div>
+    <div class="kpi-card c6">
+      <span class="kpi-val">4.61</span>
+      <div class="kpi-label">平均評分<br>雙端綜合</div>
+      <span class="kpi-delta up">▲ +0.12 vs 5月</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 1: 成效檢視 ── -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">SECTION 01</p>
+    <h2 class="section-title">成效檢視 · 供需趨勢</h2>
+    <p class="section-note">// 6月各週需求端 vs 供給端量能走勢</p>
+
+    <div class="chart-grid-2">
+      <!-- LINE CHART: weekly trend -->
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot dot-cyan"></span>週需求 vs 申請量 折線圖</div>
+        <div class="line-chart-wrap">
+          <svg class="line-chart-svg" viewBox="0 0 480 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="lineGrad1" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.2"/>
+                <stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/>
+              </linearGradient>
+              <linearGradient id="lineGrad2" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#00f5a0" stop-opacity="0.2"/>
+                <stop offset="100%" stop-color="#00f5a0" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <!-- guides -->
+            <line x1="0" y1="170" x2="480" y2="170" stroke="rgba(0,229,255,0.08)" stroke-width="1"/>
+            <line x1="0" y1="130" x2="480" y2="130" stroke="rgba(0,229,255,0.06)" stroke-width="1" stroke-dasharray="4 4"/>
+            <line x1="0" y1="90" x2="480" y2="90" stroke="rgba(0,229,255,0.06)" stroke-width="1" stroke-dasharray="4 4"/>
+            <line x1="0" y1="50" x2="480" y2="50" stroke="rgba(0,229,255,0.06)" stroke-width="1" stroke-dasharray="4 4"/>
+            <text x="460" y="173" fill="rgba(90,122,154,0.5)" font-size="8" font-family="Space Mono" text-anchor="end">0</text>
+            <text x="460" y="133" fill="rgba(90,122,154,0.5)" font-size="8" font-family="Space Mono" text-anchor="end">200</text>
+            <text x="460" y="93" fill="rgba(90,122,154,0.5)" font-size="8" font-family="Space Mono" text-anchor="end">400</text>
+            <text x="460" y="53" fill="rgba(90,122,154,0.5)" font-size="8" font-family="Space Mono" text-anchor="end">600</text>
+            <!-- Area fills: 需求端 W1=230 W2=280 W3=310 W4=340 W5=324 (scaled: /600*120, baseline 170) -->
+            <!-- y = 170 - (val/600)*120 -->
+            <!-- W1=230→170-46=124, W2=280→114, W3=310→108, W4=340→102, W5=324→105 -->
+            <!-- x: 40,140,240,340,440 -->
+            <path d="M40,124 L140,114 L240,108 L340,102 L440,105 L440,170 L40,170 Z" fill="url(#lineGrad1)"/>
+            <!-- Area: 申請端 W1=680 W2=820 W3=950 W4=910 W5=811 -->
+            <!-- y = 170 - (val/1200)*120  W1=114,W2=96,W3=75,W4=79,W5=89 -->
+            <path d="M40,114 L140,96 L240,75 L340,79 L440,89 L440,170 L40,170 Z" fill="url(#lineGrad2)"/>
+            <!-- Lines -->
+            <polyline class="line-path" points="40,124 140,114 240,108 340,102 440,105" stroke="#00e5ff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline class="line-path" points="40,114 140,96 240,75 340,79 440,89" stroke="#00f5a0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="animation-delay:0.5s"/>
+            <!-- Dots 需求 -->
+            <circle cx="40" cy="124" r="3" fill="#00e5ff"/><circle cx="140" cy="114" r="3" fill="#00e5ff"/>
+            <circle cx="240" cy="108" r="3" fill="#00e5ff"/><circle cx="340" cy="102" r="3" fill="#00e5ff"/>
+            <circle cx="440" cy="105" r="3" fill="#00e5ff"/>
+            <!-- Dots 申請 -->
+            <circle cx="40" cy="114" r="3" fill="#00f5a0"/><circle cx="140" cy="96" r="3" fill="#00f5a0"/>
+            <circle cx="240" cy="75" r="3" fill="#00f5a0"/><circle cx="340" cy="79" r="3" fill="#00f5a0"/>
+            <circle cx="440" cy="89" r="3" fill="#00f5a0"/>
+            <!-- Labels above dots -->
+            <text x="40" y="118" fill="rgba(0,229,255,0.7)" font-size="9" font-family="Orbitron" text-anchor="middle">230</text>
+            <text x="140" y="108" fill="rgba(0,229,255,0.7)" font-size="9" font-family="Orbitron" text-anchor="middle">280</text>
+            <text x="240" y="102" fill="rgba(0,229,255,0.7)" font-size="9" font-family="Orbitron" text-anchor="middle">310</text>
+            <text x="340" y="96" fill="rgba(0,229,255,0.7)" font-size="9" font-family="Orbitron" text-anchor="middle">340</text>
+            <text x="440" y="99" fill="rgba(0,229,255,0.7)" font-size="9" font-family="Orbitron" text-anchor="middle">324</text>
+            <text x="40" y="68" fill="rgba(0,245,160,0.7)" font-size="9" font-family="Orbitron" text-anchor="middle">680</text>
+            <text x="140" y="90" fill="rgba(0,245,160,0.7)" font-size="9" font-family="Orbitron" text-anchor="middle">820</text>
+            <text x="240" y="69" fill="rgba(0,245,160,0.7)" font-size="9" font-family="Orbitron" text-anchor="middle">950</text>
+            <text x="340" y="73" fill="rgba(0,245,160,0.7)" font-size="9" font-family="Orbitron" text-anchor="middle">910</text>
+            <text x="440" y="83" fill="rgba(0,245,160,0.7)" font-size="9" font-family="Orbitron" text-anchor="middle">811</text>
+          </svg>
+        </div>
+        <div class="line-labels">
+          <span class="line-lbl">W1</span>
+          <span class="line-lbl">W2</span>
+          <span class="line-lbl">W3</span>
+          <span class="line-lbl">W4</span>
+          <span class="line-lbl">W5</span>
+        </div>
+        <div style="display:flex;gap:16px;margin-top:12px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(232,244,255,0.5)"><span style="width:16px;height:2px;background:var(--cyan);display:block"></span>招募需求人數</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(232,244,255,0.5)"><span style="width:16px;height:2px;background:var(--green);display:block"></span>接案申請次數</div>
+        </div>
+      </div>
+
+      <!-- BAR CHART: 完工率 by task type -->
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot dot-gold"></span>各類任務完工率</div>
+        <div class="bar-chart">
+          <div class="bar-guides">
+            <div class="bar-guide" style="bottom:25%;"><span class="bar-guide-label" style="bottom:25%;">25%</span></div>
+            <div class="bar-guide" style="bottom:50%;"><span class="bar-guide-label" style="bottom:50%;">50%</span></div>
+            <div class="bar-guide" style="bottom:75%;"><span class="bar-guide-label" style="bottom:75%;">75%</span></div>
+            <div class="bar-guide" style="bottom:100%;"><span class="bar-guide-label" style="bottom:99%;">100%</span></div>
+          </div>
+          <!-- 挖貓砂 92% / 幫買菜 87% / 協助打掃 91% / 協助跑腿 84% -->
+          <div class="bar-col tooltip-wrap">
+            <div class="tooltip-popup">完工率 92.4%</div>
+            <div class="bar-wrap">
+              <div class="bar-val">92.4%</div>
+              <div class="bar" style="height:calc(92.4% * 1.5); background: linear-gradient(180deg, #00e5ff, #00b4d8); box-shadow: 0 0 12px rgba(0,229,255,0.3);"></div>
+            </div>
+            <div class="bar-xlbl">挖貓砂</div>
+          </div>
+          <div class="bar-col tooltip-wrap">
+            <div class="tooltip-popup">完工率 87.1%</div>
+            <div class="bar-wrap">
+              <div class="bar-val">87.1%</div>
+              <div class="bar" style="height:calc(87.1% * 1.5); background: linear-gradient(180deg, #00f5a0, #00b880); animation-delay:0.1s;"></div>
+            </div>
+            <div class="bar-xlbl">幫買菜</div>
+          </div>
+          <div class="bar-col tooltip-wrap">
+            <div class="tooltip-popup">完工率 91.2%</div>
+            <div class="bar-wrap">
+              <div class="bar-val">91.2%</div>
+              <div class="bar" style="height:calc(91.2% * 1.5); background: linear-gradient(180deg, #ffd166, #e0a020); animation-delay:0.2s;"></div>
+            </div>
+            <div class="bar-xlbl">協助打掃</div>
+          </div>
+          <div class="bar-col tooltip-wrap">
+            <div class="tooltip-popup">完工率 83.6%</div>
+            <div class="bar-wrap">
+              <div class="bar-val">83.6%</div>
+              <div class="bar" style="height:calc(83.6% * 1.5); background: linear-gradient(180deg, #ff9f43, #e07020); animation-delay:0.3s;"></div>
+            </div>
+            <div class="bar-xlbl">協助跑腿</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 2: 任務生態分布 ── -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">SECTION 02</p>
+    <h2 class="section-title">平台生態喜好分布</h2>
+    <p class="section-note">// 指標 25–30 · 任務類型生態系分析</p>
+
+    <div class="chart-grid-3">
+      <!-- PIE: 需求分布 -->
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot dot-cyan"></span>任務需求比例分布</div>
+        <div class="pie-wrap">
+          <div class="pie-svg-wrap">
+            <svg viewBox="0 0 160 160" width="140" height="140">
+              <defs>
+                <filter id="pieGlow">
+                  <feGaussianBlur stdDeviation="2" result="blur"/>
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+              <!-- Segments: 挖貓砂28% 幫買菜22% 協助打掃32% 協助跑腿18% -->
+              <!-- Using stroke-dasharray trick on r=50 circ=314.16 -->
+              <!-- 打掃 32%: 100.5 / 0→-90 / offset=0 -->
+              <!-- 挖貓砂 28%: 87.96 / offset=100.5 / rotate=115.2 -->
+              <!-- 幫買菜 22%: 69.1 / offset=... -->
+              <!-- 跑腿 18%: 56.5 -->
+              <circle cx="80" cy="80" r="50" fill="none" stroke="#ffd166" stroke-width="24"
+                stroke-dasharray="100.5 213.66" stroke-dashoffset="-78.54" filter="url(#pieGlow)"/>
+              <circle cx="80" cy="80" r="50" fill="none" stroke="#00e5ff" stroke-width="24"
+                stroke-dasharray="87.96 226.2" stroke-dashoffset="-179.04" filter="url(#pieGlow)"/>
+              <circle cx="80" cy="80" r="50" fill="none" stroke="#00f5a0" stroke-width="24"
+                stroke-dasharray="69.1 245.06" stroke-dashoffset="-267" filter="url(#pieGlow)"/>
+              <circle cx="80" cy="80" r="50" fill="none" stroke="#ff9f43" stroke-width="24"
+                stroke-dasharray="56.55 257.61" stroke-dashoffset="-336.1" filter="url(#pieGlow)"/>
+              <!-- Center -->
+              <circle cx="80" cy="80" r="28" fill="#070e1c"/>
+              <text x="80" y="76" text-anchor="middle" fill="rgba(232,244,255,0.5)" font-size="8" font-family="Space Mono">任務</text>
+              <text x="80" y="88" text-anchor="middle" fill="rgba(232,244,255,0.5)" font-size="8" font-family="Space Mono">分布</text>
+            </svg>
+          </div>
+          <div class="pie-legend">
+            <div class="legend-item"><span class="legend-dot" style="background:#ffd166;"></span><span class="legend-name">協助打掃</span><span class="legend-pct" style="color:var(--gold)">32%</span></div>
+            <div class="legend-item"><span class="legend-dot" style="background:#00e5ff;"></span><span class="legend-name">挖貓砂</span><span class="legend-pct" style="color:var(--cyan)">28%</span></div>
+            <div class="legend-item"><span class="legend-dot" style="background:#00f5a0;"></span><span class="legend-name">幫買菜</span><span class="legend-pct" style="color:var(--green)">22%</span></div>
+            <div class="legend-item"><span class="legend-dot" style="background:#ff9f43;"></span><span class="legend-name">協助跑腿</span><span class="legend-pct" style="color:var(--orange)">18%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PIE: 老新比 -->
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot dot-gold"></span>老新比分析（雙端）</div>
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          <!-- 發案者 -->
+          <div>
+            <div style="font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;letter-spacing:2px;margin-bottom:10px;">發案者 [B]</div>
+            <div class="pie-wrap" style="gap:16px;">
+              <svg viewBox="0 0 100 100" width="80" height="80">
+                <circle cx="50" cy="50" r="36" fill="none" stroke="#7b2fff" stroke-width="16"
+                  stroke-dasharray="113.1 113.1" stroke-dashoffset="-28.3" opacity="0.9"/>
+                <circle cx="50" cy="50" r="36" fill="none" stroke="rgba(123,47,255,0.2)" stroke-width="16"
+                  stroke-dasharray="113.1 113.1" stroke-dashoffset="-141.4"/>
+                <circle cx="50" cy="50" r="18" fill="#070e1c"/>
+                <text x="50" y="54" text-anchor="middle" fill="#7b2fff" font-size="10" font-family="Orbitron" font-weight="700">63%</text>
+              </svg>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;">
+                <div style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:#7b2fff;display:block;border-radius:1px"></span><span style="color:rgba(232,244,255,0.6)">老用戶 63%</span></div>
+                <div style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:rgba(123,47,255,0.2);display:block;border-radius:1px;border:1px solid #7b2fff"></span><span style="color:rgba(232,244,255,0.6)">新用戶 37%</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <!-- 接案者 -->
+          <div>
+            <div style="font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;letter-spacing:2px;margin-bottom:10px;">接案者 [C]</div>
+            <div class="pie-wrap" style="gap:16px;">
+              <svg viewBox="0 0 100 100" width="80" height="80">
+                <circle cx="50" cy="50" r="36" fill="none" stroke="#ff2d78" stroke-width="16"
+                  stroke-dasharray="84.8 141.4" stroke-dashoffset="-28.3" opacity="0.9"/>
+                <circle cx="50" cy="50" r="36" fill="none" stroke="rgba(255,45,120,0.2)" stroke-width="16"
+                  stroke-dasharray="141.4 84.8" stroke-dashoffset="-113.1"/>
+                <circle cx="50" cy="50" r="18" fill="#070e1c"/>
+                <text x="50" y="54" text-anchor="middle" fill="#ff2d78" font-size="10" font-family="Orbitron" font-weight="700">48%</text>
+              </svg>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;">
+                <div style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:#ff2d78;display:block;border-radius:1px"></span><span style="color:rgba(232,244,255,0.6)">老用戶 48%</span></div>
+                <div style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:rgba(255,45,120,0.2);display:block;border-radius:1px;border:1px solid #ff2d78"></span><span style="color:rgba(232,244,255,0.6)">新用戶 52%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BAR: 平均薪資 & 工時 -->
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot dot-violet"></span>平均薪資分布（元/小時）</div>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
+          <!-- 挖貓砂 160 / 幫買菜 140 / 協助打掃 180 / 協助跑腿 150 -->
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:5px;letter-spacing:1px;">
+              <span>挖貓砂</span><span style="color:var(--cyan);font-family:'Orbitron',monospace;">$160</span>
+            </div>
+            <div style="height:8px;background:rgba(0,229,255,0.06);border:1px solid rgba(0,229,255,0.08);overflow:hidden;">
+              <div style="height:100%;width:88%;background:linear-gradient(90deg,#00e5ff,#00b4d8);animation:growBar 1s 0.1s ease forwards;transform:scaleX(0);transform-origin:left;"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:5px;letter-spacing:1px;">
+              <span>幫買菜</span><span style="color:var(--green);font-family:'Orbitron',monospace;">$140</span>
+            </div>
+            <div style="height:8px;background:rgba(0,245,160,0.06);border:1px solid rgba(0,245,160,0.08);overflow:hidden;">
+              <div style="height:100%;width:77%;background:linear-gradient(90deg,#00f5a0,#00b880);animation:growBar 1s 0.2s ease forwards;transform:scaleX(0);transform-origin:left;"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:5px;letter-spacing:1px;">
+              <span>協助打掃</span><span style="color:var(--gold);font-family:'Orbitron',monospace;">$180</span>
+            </div>
+            <div style="height:8px;background:rgba(255,209,102,0.06);border:1px solid rgba(255,209,102,0.08);overflow:hidden;">
+              <div style="height:100%;width:100%;background:linear-gradient(90deg,#ffd166,#e0a020);animation:growBar 1s 0.3s ease forwards;transform:scaleX(0);transform-origin:left;"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:5px;letter-spacing:1px;">
+              <span>協助跑腿</span><span style="color:var(--orange);font-family:'Orbitron',monospace;">$150</span>
+            </div>
+            <div style="height:8px;background:rgba(255,159,67,0.06);border:1px solid rgba(255,159,67,0.08);overflow:hidden;">
+              <div style="height:100%;width:83%;background:linear-gradient(90deg,#ff9f43,#e07020);animation:growBar 1s 0.4s ease forwards;transform:scaleX(0);transform-origin:left;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-title" style="margin-top:4px;"><span class="dot dot-pink"></span>平均工時（小時/次）</div>
+        <div style="display:flex;gap:4px;align-items:flex-end;height:80px;padding:0 4px;">
+          <!-- 挖貓砂 0.5h / 幫買菜 1.5h / 協助打掃 3h / 協助跑腿 1h -->
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%">
+            <div style="font-family:Orbitron,monospace;font-size:9px;color:var(--cyan)">0.5h</div>
+            <div style="width:70%;background:linear-gradient(180deg,#00e5ff,#00b4d8);border-radius:1px 1px 0 0;height:13%;animation:growBar 0.8s 0.1s ease forwards;transform:scaleY(0);transform-origin:bottom;"></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%">
+            <div style="font-family:Orbitron,monospace;font-size:9px;color:var(--green)">1.5h</div>
+            <div style="width:70%;background:linear-gradient(180deg,#00f5a0,#00b880);border-radius:1px 1px 0 0;height:40%;animation:growBar 0.8s 0.2s ease forwards;transform:scaleY(0);transform-origin:bottom;"></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%">
+            <div style="font-family:Orbitron,monospace;font-size:9px;color:var(--gold)">3.0h</div>
+            <div style="width:70%;background:linear-gradient(180deg,#ffd166,#e0a020);border-radius:1px 1px 0 0;height:80%;animation:growBar 0.8s 0.3s ease forwards;transform:scaleY(0);transform-origin:bottom;"></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%">
+            <div style="font-family:Orbitron,monospace;font-size:9px;color:var(--orange)">1.0h</div>
+            <div style="width:70%;background:linear-gradient(180deg,#ff9f43,#e07020);border-radius:1px 1px 0 0;height:27%;animation:growBar 0.8s 0.4s ease forwards;transform:scaleY(0);transform-origin:bottom;"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:0;margin-top:6px;">
+          <div style="flex:1;text-align:center;font-size:9px;color:var(--muted)">挖貓砂</div>
+          <div style="flex:1;text-align:center;font-size:9px;color:var(--muted)">幫買菜</div>
+          <div style="flex:1;text-align:center;font-size:9px;color:var(--muted)">協助打掃</div>
+          <div style="flex:1;text-align:center;font-size:9px;color:var(--muted)">協助跑腿</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ECOLOGY FULL TABLE -->
+    <div style="margin-top:2px;">
+      <div class="chart-box" style="animation-delay:0.2s;">
+        <div class="chart-title"><span class="dot dot-violet"></span>任務生態矩陣總覽 — 供需比 · 媒合速度 · 搶手排名</div>
+        <div class="eco-matrix">
+          <table class="eco-table">
+            <thead>
+              <tr>
+                <th>任務類型</th>
+                <th>需求職缺數</th>
+                <th>申請人次</th>
+                <th>供需比</th>
+                <th>媒合人數</th>
+                <th>平均媒合時間</th>
+                <th>搶手指數</th>
+                <th>搶手排名</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="task-name"><span class="task-icon">🐱</span> 挖貓砂</div></td>
+                <td><span style="font-family:Orbitron,monospace;font-size:12px;color:var(--cyan)">360</span></td>
+                <td><span style="font-family:Orbitron,monospace;font-size:12px;color:var(--text)">1,028</span></td>
+                <td><span style="font-family:Orbitron,monospace;font-size:12px;color:var(--green)">2.86×</span></td>
+                <td><span style="font-family:Orbitron,monospace;font-size:12px;">332</span></td>
+                <td><span style="font-family:Orbitron,monospace;font-size:11px;color:var(--gold)">12 min</span></td>
+                <td>
+                  <div class="speed-bar">
+                    <span class="speed-dot" style="background:var(--gold)"></span>
+                    <span class="speed-dot" style="background:var(--gold)"></span>
+                    <span class="speed-dot" style="background:var(--gold)"></span>
+                    <span class="speed-dot" style="background:var(--gold)"></span>
+                    <span class="speed-dot" style="background:rgba(255,209,102,0.2)"></span>
+                  </div>
+                </td>
+                <td><span class="rank-badge rank-2">2</span></td>
+              </tr>
+              <tr>
+                <td><div class="task-name"><span class="task-icon">🛒</span> 幫買菜</div></td>
+                <td><span style="font-family:Orbitron,monospace;font-size:12px;color:var(--cyan)">283</span></td>
+                <td><span style="font-family:Orbitron,monospace;font-size:12px;color:var(--text)">808</span></td>
+                <td><span style="font-family:Orbitron,monospace;font-size:12px;color:var(--green)">2.86×</span></td>
+                <td><span style="font-family:Orbitron,monospace;font-size:12px;">246</span></td>
+                <td><span style="font-family:Orbitron,monospace;font-size:11px;color:var(--orange)">28 min</span></td>
+                <td>
+                  <div class="speed-bar">
+                    <span class="speed-dot" style="background:var(--orange)"></span>
+                    <span class="speed-dot" style="background:var(--orange)"></span>
+                    <span class="speed-dot" style="background:var(--orange)"></span>
+                    <span class="speed-dot" style="background:rgba(255,159,67,0.2)"></span>
+                    <span class="speed-dot" style="background:rgba(255,159,67,0.2)"></span>
+                  </div>
+                </td>
+                <td><span class="rank-badge rank-3">3</span></td>
+              </tr>
+              <tr>
+                <td><div class="task-name"><span class="task-icon">🧹</span> 協助打掃</div></td>
+                <td><span style="font-family:Orbitron,monospace;font-size:12px;color:var(--cyan)">411</span></td>
+                <td><span style="font-family:Orbitron,monospace;font-size:12px;color:var(--text)">1,176</span></td>
+                <td><span style="font-family:Orbitron,monospace;font-size:12px;color:var(--green)">2.86×</span></td>
+                <td><span style="font-family:Orbitron,monospace;font-size:12px;">375</span></td>
+                <td><span style="font-family:Orbitron,monospace;font-size:11px;color:var(--cyan)">8 min</span></td>
+                <td>
+                  <div class="speed-bar">
+                    <span class="speed-dot" style="background:var(--cyan)"></span>
+                    <span class="speed-dot" style="background:var(--cyan)"></span>
+                    <span class="speed-dot" style="background:var(--cyan)"></span>
+                    <span class="speed-dot" style="background:var(--cyan)"></span>
+                    <span class="speed-dot" style="background:var(--cyan)"></span>
+                  </div>
+                </td>
+                <td><span class="rank-badge rank-1">1</span></td>
+              </tr>
+              <tr>
+                <td><div class="task-name"><span class="task-icon">🏃</span> 協助跑腿</div></td>
+                <td><span style="font-family:Orbitron,monospace;font-size:12px;color:var(--cyan)">230</span></td>
+                <td><span style="font-family:Orbitron,monospace;font-size:12px;color:var(--text)">659</span></td>
+                <td><span style="font-family:Orbitron,monospace;font-size:12px;color:var(--green)">2.86×</span></td>
+                <td><span style="font-family:Orbitron,monospace;font-size:12px;">193</span></td>
+                <td><span style="font-family:Orbitron,monospace;font-size:11px;color:var(--muted)">41 min</span></td>
+                <td>
+                  <div class="speed-bar">
+                    <span class="speed-dot" style="background:rgba(90,122,154,0.4)"></span>
+                    <span class="speed-dot" style="background:rgba(90,122,154,0.4)"></span>
+                    <span class="speed-dot" style="background:rgba(90,122,154,0.2)"></span>
+                    <span class="speed-dot" style="background:rgba(90,122,154,0.2)"></span>
+                    <span class="speed-dot" style="background:rgba(90,122,154,0.2)"></span>
+                  </div>
+                </td>
+                <td><span class="rank-badge rank-4">4</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 3: 轉換漏斗 ── -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">SECTION 03</p>
+    <h2 class="section-title">發案轉換漏斗</h2>
+    <p class="section-note">// 從可發案資格 → 實際發案 → 媒合完工</p>
+
+    <div class="chart-grid-2">
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot dot-cyan"></span>發案端轉換漏斗 [B]</div>
+        <div class="funnel-wrap">
+          <div class="funnel-row">
+            <div class="funnel-label">可發案人數</div>
+            <div class="funnel-bar-outer">
+              <div class="funnel-bar-inner" style="width:100%;background:linear-gradient(90deg,rgba(0,229,255,0.4),rgba(0,229,255,0.1));color:var(--cyan);">1,840</div>
+            </div>
+            <div class="funnel-pct">100%</div>
+          </div>
+          <div class="funnel-arrow">↓ 轉換率 69.8%</div>
+          <div class="funnel-row">
+            <div class="funnel-label">實際發案者</div>
+            <div class="funnel-bar-outer">
+              <div class="funnel-bar-inner" style="width:69.8%;background:linear-gradient(90deg,rgba(0,229,255,0.6),rgba(0,229,255,0.2));color:var(--cyan);">1,284</div>
+            </div>
+            <div class="funnel-pct">69.8%</div>
+          </div>
+          <div class="funnel-arrow">↓ 媒合率 86.7%</div>
+          <div class="funnel-row">
+            <div class="funnel-label">媒合職缺數</div>
+            <div class="funnel-bar-outer">
+              <div class="funnel-bar-inner" style="width:60.5%;background:linear-gradient(90deg,rgba(0,229,255,0.8),rgba(0,180,216,0.4));color:var(--cyan);">1,113</div>
+            </div>
+            <div class="funnel-pct">60.5%</div>
+          </div>
+          <div class="funnel-arrow">↓ 完工率 89.3%</div>
+          <div class="funnel-row">
+            <div class="funnel-label">完工結案</div>
+            <div class="funnel-bar-outer">
+              <div class="funnel-bar-inner" style="width:54.1%;background:linear-gradient(90deg,#00e5ff,#00b4d8);color:#040810;font-weight:900;">994</div>
+            </div>
+            <div class="funnel-pct" style="color:var(--green)">54.1%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot dot-green"></span>接案端轉換漏斗 [C]</div>
+        <div class="funnel-wrap">
+          <div class="funnel-row">
+            <div class="funnel-label">申請次數</div>
+            <div class="funnel-bar-outer">
+              <div class="funnel-bar-inner" style="width:100%;background:linear-gradient(90deg,rgba(0,245,160,0.4),rgba(0,245,160,0.1));color:var(--green);">3,671</div>
+            </div>
+            <div class="funnel-pct">100%</div>
+          </div>
+          <div class="funnel-arrow">↓ 媒合率 30.3%</div>
+          <div class="funnel-row">
+            <div class="funnel-label">媒合人數</div>
+            <div class="funnel-bar-outer">
+              <div class="funnel-bar-inner" style="width:30.3%;background:linear-gradient(90deg,rgba(0,245,160,0.6),rgba(0,245,160,0.2));color:var(--green);">1,113</div>
+            </div>
+            <div class="funnel-pct">30.3%</div>
+          </div>
+          <div class="funnel-arrow">↓ 完工率 89.3%</div>
+          <div class="funnel-row">
+            <div class="funnel-label">完工人數</div>
+            <div class="funnel-bar-outer">
+              <div class="funnel-bar-inner" style="width:27.1%;background:linear-gradient(90deg,rgba(0,245,160,0.8),rgba(0,200,130,0.4));color:var(--green);">994</div>
+            </div>
+            <div class="funnel-pct">27.1%</div>
+          </div>
+          <div class="funnel-arrow">↓ 返利資格 71.2%</div>
+          <div class="funnel-row">
+            <div class="funnel-label">獲得返利(4★+)</div>
+            <div class="funnel-bar-outer">
+              <div class="funnel-bar-inner" style="width:19.3%;background:linear-gradient(90deg,#00f5a0,#00b880);color:#040810;font-weight:900;">708</div>
+            </div>
+            <div class="funnel-pct" style="color:var(--green)">19.3%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 4: 信任狀態 ── -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">SECTION 04</p>
+    <h2 class="section-title">雙端信任狀態監測</h2>
+    <p class="section-note">// 取消 · 放鳥 · 駁回 · 評分分析</p>
+
+    <div class="chart-grid-2">
+      <!-- Trust table -->
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot dot-pink"></span>信任指標總攬</div>
+        <table class="trust-table">
+          <thead>
+            <tr>
+              <th>指標</th>
+              <th style="text-align:center">件數</th>
+              <th style="text-align:center">佔比</th>
+              <th>狀態</th>
+              <th style="min-width:100px">分布</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="metric-name">一般取消（雙端）</td>
+              <td class="metric-val" style="color:var(--gold)">89</td>
+              <td class="metric-val" style="color:var(--muted)">8.0%</td>
+              <td><span class="badge badge-mid">WATCH</span></td>
+              <td class="metric-bar-cell"><div class="mini-bar-outer"><div class="mini-bar-inner" style="width:50%;background:var(--gold);"></div></div></td>
+            </tr>
+            <tr>
+              <td class="metric-name">臨時取消（雙端）</td>
+              <td class="metric-val" style="color:var(--pink)">42</td>
+              <td class="metric-val" style="color:var(--muted)">3.8%</td>
+              <td><span class="badge badge-warn">RISK</span></td>
+              <td class="metric-bar-cell"><div class="mini-bar-outer"><div class="mini-bar-inner" style="width:24%;background:var(--pink);"></div></div></td>
+            </tr>
+            <tr>
+              <td class="metric-name">放鳥（接案端）</td>
+              <td class="metric-val" style="color:var(--pink)">47</td>
+              <td class="metric-val" style="color:var(--muted)">4.2%</td>
+              <td><span class="badge badge-warn">RISK</span></td>
+              <td class="metric-bar-cell"><div class="mini-bar-outer"><div class="mini-bar-inner" style="width:26%;background:var(--pink);"></div></div></td>
+            </tr>
+            <tr>
+              <td class="metric-name">主動駁回</td>
+              <td class="metric-val" style="color:var(--orange)">156</td>
+              <td class="metric-val" style="color:var(--muted)">14.0%</td>
+              <td><span class="badge badge-mid">WATCH</span></td>
+              <td class="metric-bar-cell"><div class="mini-bar-outer"><div class="mini-bar-inner" style="width:87%;background:var(--orange);"></div></div></td>
+            </tr>
+            <tr>
+              <td class="metric-name">自動駁回（逾時）</td>
+              <td class="metric-val" style="color:var(--pink)">27</td>
+              <td class="metric-val" style="color:var(--muted)">2.4%</td>
+              <td><span class="badge badge-warn">RISK</span></td>
+              <td class="metric-bar-cell"><div class="mini-bar-outer"><div class="mini-bar-inner" style="width:15%;background:var(--pink);animation-delay:0.5s"></div></div></td>
+            </tr>
+            <tr>
+              <td class="metric-name">雙方完成評價</td>
+              <td class="metric-val" style="color:var(--green)">881</td>
+              <td class="metric-val" style="color:var(--green)">88.6%</td>
+              <td><span class="badge badge-ok">GOOD</span></td>
+              <td class="metric-bar-cell"><div class="mini-bar-outer"><div class="mini-bar-inner" style="width:88.6%;background:var(--green);"></div></div></td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:12px;padding:10px 14px;border-left:2px solid var(--pink);background:rgba(255,45,120,0.05);font-family:'Space Mono',monospace;font-size:10px;color:rgba(255,45,120,0.8);line-height:1.7;">
+          ⚠ 待確認：發案者72小時無結案 → 視為自動駁回機制待審視
+        </div>
+      </div>
+
+      <!-- Bar chart: 取消事件每週趨勢 -->
+      <div class="chart-box">
+        <div class="chart-title"><span class="dot dot-pink"></span>取消 · 放鳥週趨勢</div>
+        <div style="position:relative;">
+          <svg viewBox="0 0 440 200" width="100%" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="cancelGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ff2d78" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#ff2d78" stop-opacity="0"/>
+              </linearGradient>
+              <linearGradient id="noShowGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ffd166" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#ffd166" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <!-- guides -->
+            <line x1="0" y1="165" x2="440" y2="165" stroke="rgba(0,229,255,0.08)" stroke-width="1"/>
+            <line x1="0" y1="125" x2="440" y2="125" stroke="rgba(0,229,255,0.05)" stroke-width="1" stroke-dasharray="4 4"/>
+            <line x1="0" y1="85" x2="440" y2="85" stroke="rgba(0,229,255,0.05)" stroke-width="1" stroke-dasharray="4 4"/>
+            <line x1="0" y1="45" x2="440" y2="45" stroke="rgba(0,229,255,0.05)" stroke-width="1" stroke-dasharray="4 4"/>
+            <text x="430" y="168" fill="rgba(90,122,154,0.5)" font-size="8" font-family="Space Mono" text-anchor="end">0</text>
+            <text x="430" y="128" fill="rgba(90,122,154,0.5)" font-size="8" font-family="Space Mono" text-anchor="end">10</text>
+            <text x="430" y="88" fill="rgba(90,122,154,0.5)" font-size="8" font-family="Space Mono" text-anchor="end">20</text>
+            <text x="430" y="48" fill="rgba(90,122,154,0.5)" font-size="8" font-family="Space Mono" text-anchor="end">30</text>
+            <!-- 取消: W1=21,W2=25,W3=18,W4=22,W5=15 → y=165-(val/30)*120 → 81,65,93,77,105 -->
+            <path d="M44,81 L132,65 L220,93 L308,77 L396,105 L396,165 L44,165 Z" fill="url(#cancelGrad)"/>
+            <polyline class="line-path" points="44,81 132,65 220,93 308,77 396,105" stroke="#ff2d78" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- 放鳥: W1=12,W2=14,W3=8,W4=11,W5=7 → y=165-val/30*120 → 117,109,133,121,137 -->
+            <path d="M44,117 L132,109 L220,133 L308,121 L396,137 L396,165 L44,165 Z" fill="url(#noShowGrad)"/>
+            <polyline class="line-path" points="44,117 132,109 220,133 308,121 396,137" stroke="#ffd166" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="animation-delay:0.4s"/>
+            <!-- Dots 取消 -->
+            <circle cx="44" cy="81" r="3" fill="#ff2d78"/>
+            <circle cx="132" cy="65" r="3" fill="#ff2d78"/>
+            <circle cx="220" cy="93" r="3" fill="#ff2d78"/>
+            <circle cx="308" cy="77" r="3" fill="#ff2d78"/>
+            <circle cx="396" cy="105" r="3" fill="#ff2d78"/>
+            <!-- Dots 放鳥 -->
+            <circle cx="44" cy="117" r="3" fill="#ffd166"/>
+            <circle cx="132" cy="109" r="3" fill="#ffd166"/>
+            <circle cx="220" cy="133" r="3" fill="#ffd166"/>
+            <circle cx="308" cy="121" r="3" fill="#ffd166"/>
+            <circle cx="396" cy="137" r="3" fill="#ffd166"/>
+            <!-- X labels -->
+            <text x="44" y="182" text-anchor="middle" fill="rgba(90,122,154,0.7)" font-size="9" font-family="Space Mono">W1</text>
+            <text x="132" y="182" text-anchor="middle" fill="rgba(90,122,154,0.7)" font-size="9" font-family="Space Mono">W2</text>
+            <text x="220" y="182" text-anchor="middle" fill="rgba(90,122,154,0.7)" font-size="9" font-family="Space Mono">W3</text>
+            <text x="308" y="182" text-anchor="middle" fill="rgba(90,122,154,0.7)" font-size="9" font-family="Space Mono">W4</text>
+            <text x="396" y="182" text-anchor="middle" fill="rgba(90,122,154,0.7)" font-size="9" font-family="Space Mono">W5</text>
+          </svg>
+        </div>
+        <div style="display:flex;gap:16px;margin-top:8px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(232,244,255,0.5)"><span style="width:16px;height:2px;background:var(--pink);display:block"></span>取消事件（雙端）</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(232,244,255,0.5)"><span style="width:16px;height:2px;background:var(--gold);display:block"></span>放鳥（接案端）</div>
+        </div>
+
+        <!-- 評分 distribution -->
+        <div class="chart-title" style="margin-top:24px;"><span class="dot dot-green"></span>評分分布（接案者）</div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="font-family:Orbitron,monospace;font-size:10px;color:var(--gold);width:28px;">5★</div>
+            <div style="flex:1;height:14px;background:rgba(255,209,102,0.06);border:1px solid rgba(255,209,102,0.1);overflow:hidden;"><div style="height:100%;width:54%;background:linear-gradient(90deg,#ffd166,#e0a020);animation:growBar 1s 0.1s ease forwards;transform:scaleX(0);transform-origin:left;"></div></div>
+            <div style="font-family:Orbitron,monospace;font-size:10px;color:var(--gold);width:36px;text-align:right;">54%</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="font-family:Orbitron,monospace;font-size:10px;color:var(--green);width:28px;">4★</div>
+            <div style="flex:1;height:14px;background:rgba(0,245,160,0.06);border:1px solid rgba(0,245,160,0.1);overflow:hidden;"><div style="height:100%;width:31%;background:linear-gradient(90deg,#00f5a0,#00b880);animation:growBar 1s 0.2s ease forwards;transform:scaleX(0);transform-origin:left;"></div></div>
+            <div style="font-family:Orbitron,monospace;font-size:10px;color:var(--green);width:36px;text-align:right;">31%</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="font-family:Orbitron,monospace;font-size:10px;color:var(--cyan);width:28px;">3★</div>
+            <div style="flex:1;height:14px;background:rgba(0,229,255,0.06);border:1px solid rgba(0,229,255,0.08);overflow:hidden;"><div style="height:100%;width:10%;background:linear-gradient(90deg,#00e5ff,#00b4d8);animation:growBar 1s 0.3s ease forwards;transform:scaleX(0);transform-origin:left;"></div></div>
+            <div style="font-family:Orbitron,monospace;font-size:10px;color:var(--cyan);width:36px;text-align:right;">10%</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="font-family:Orbitron,monospace;font-size:10px;color:var(--pink);width:28px;">≤2★</div>
+            <div style="flex:1;height:14px;background:rgba(255,45,120,0.06);border:1px solid rgba(255,45,120,0.08);overflow:hidden;"><div style="height:100%;width:5%;background:linear-gradient(90deg,#ff2d78,#c0105e);animation:growBar 1s 0.4s ease forwards;transform:scaleX(0);transform-origin:left;"></div></div>
+            <div style="font-family:Orbitron,monospace;font-size:10px;color:var(--pink);width:36px;text-align:right;">5%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 5: 地區分布 ── -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">SECTION 05</p>
+    <h2 class="section-title">各地區需求 · 申請 · 媒合狀態</h2>
+    <p class="section-note">// 指標 29 · 主要城市分布</p>
+
+    <div class="region-grid">
+      <div class="region-card" style="border-top:2px solid var(--cyan);">
+        <div class="region-name">🏙 台北市</div>
+        <div class="region-stats">
+          <div class="region-stat"><span class="region-stat-label">需求職缺</span><span class="region-stat-val" style="color:var(--cyan)">412</span></div>
+          <div class="region-stat"><span class="region-stat-label">申請人次</span><span class="region-stat-val" style="color:var(--text)">1,178</span></div>
+          <div class="region-stat"><span class="region-stat-label">媒合人數</span><span class="region-stat-val" style="color:var(--green)">357</span></div>
+          <div class="region-stat"><span class="region-stat-label">完工率</span><span class="region-stat-val" style="color:var(--gold)">91.6%</span></div>
+        </div>
+      </div>
+      <div class="region-card" style="border-top:2px solid var(--green);">
+        <div class="region-name">🌆 新北市</div>
+        <div class="region-stats">
+          <div class="region-stat"><span class="region-stat-label">需求職缺</span><span class="region-stat-val" style="color:var(--cyan)">298</span></div>
+          <div class="region-stat"><span class="region-stat-label">申請人次</span><span class="region-stat-val" style="color:var(--text)">853</span></div>
+          <div class="region-stat"><span class="region-stat-label">媒合人數</span><span class="region-stat-val" style="color:var(--green)">258</span></div>
+          <div class="region-stat"><span class="region-stat-label">完工率</span><span class="region-stat-val" style="color:var(--gold)">89.9%</span></div>
+        </div>
+      </div>
+      <div class="region-card" style="border-top:2px solid var(--gold);">
+        <div class="region-name">🌇 台中市</div>
+        <div class="region-stats">
+          <div class="region-stat"><span class="region-stat-label">需求職缺</span><span class="region-stat-val" style="color:var(--cyan)">241</span></div>
+          <div class="region-stat"><span class="region-stat-label">申請人次</span><span class="region-stat-val" style="color:var(--text)">689</span></div>
+          <div class="region-stat"><span class="region-stat-label">媒合人數</span><span class="region-stat-val" style="color:var(--green)">209</span></div>
+          <div class="region-stat"><span class="region-stat-label">完工率</span><span class="region-stat-val" style="color:var(--gold)">88.5%</span></div>
+        </div>
+      </div>
+      <div class="region-card" style="border-top:2px solid var(--violet);">
+        <div class="region-name">🌃 台南市</div>
+        <div class="region-stats">
+          <div class="region-stat"><span class="region-stat-label">需求職缺</span><span class="region-stat-val" style="color:var(--cyan)">183</span></div>
+          <div class="region-stat"><span class="region-stat-label">申請人次</span><span class="region-stat-val" style="color:var(--text)">523</span></div>
+          <div class="region-stat"><span class="region-stat-label">媒合人數</span><span class="region-stat-val" style="color:var(--green)">160</span></div>
+          <div class="region-stat"><span class="region-stat-label">完工率</span><span class="region-stat-val" style="color:var(--gold)">90.0%</span></div>
+        </div>
+      </div>
+      <div class="region-card" style="border-top:2px solid var(--orange);">
+        <div class="region-name">🌉 高雄市</div>
+        <div class="region-stats">
+          <div class="region-stat"><span class="region-stat-label">需求職缺</span><span class="region-stat-val" style="color:var(--cyan)">102</span></div>
+          <div class="region-stat"><span class="region-stat-label">申請人次</span><span class="region-stat-val" style="color:var(--text)">291</span></div>
+          <div class="region-stat"><span class="region-stat-label">媒合人數</span><span class="region-stat-val" style="color:var(--green)">88</span></div>
+          <div class="region-stat"><span class="region-stat-label">完工率</span><span class="region-stat-val" style="color:var(--gold)">87.5%</span></div>
+        </div>
+      </div>
+      <div class="region-card" style="border-top:2px solid var(--muted);">
+        <div class="region-name">📍 其他地區</div>
+        <div class="region-stats">
+          <div class="region-stat"><span class="region-stat-label">需求職缺</span><span class="region-stat-val" style="color:var(--cyan)">48</span></div>
+          <div class="region-stat"><span class="region-stat-label">申請人次</span><span class="region-stat-val" style="color:var(--text)">137</span></div>
+          <div class="region-stat"><span class="region-stat-label">媒合人數</span><span class="region-stat-val" style="color:var(--green)">41</span></div>
+          <div class="region-stat"><span class="region-stat-label">完工率</span><span class="region-stat-val" style="color:var(--gold)">82.9%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bar chart: region comparison -->
+    <div style="margin-top:2px;">
+      <div class="chart-box" style="animation-delay:0.2s;">
+        <div class="chart-title"><span class="dot dot-cyan"></span>各地區需求職缺 vs 媒合人數 對比柱狀圖</div>
+        <div style="display:flex;align-items:flex-end;gap:8px;height:160px;padding:0 8px;position:relative;">
+          <div style="position:absolute;inset:0;pointer-events:none;">
+            <div style="position:absolute;bottom:25%;left:0;right:0;height:1px;background:rgba(0,229,255,0.05);"></div>
+            <div style="position:absolute;bottom:50%;left:0;right:0;height:1px;background:rgba(0,229,255,0.05);"></div>
+            <div style="position:absolute;bottom:75%;left:0;right:0;height:1px;background:rgba(0,229,255,0.05);"></div>
+            <div style="position:absolute;bottom:99%;left:0;right:0;height:1px;background:rgba(0,229,255,0.08);"></div>
+          </div>
+          <!-- Each region has 2 bars: 職缺 & 媒合 -->
+          <!-- Max=412 for scaling (100% = 412) -->
+          <!-- 台北: 412, 357 // 新北: 298,258 // 台中:241,209 // 台南:183,160 // 高雄:102,88 // 其他:48,41 -->
+          <div style="flex:1;display:flex;gap:2px;align-items:flex-end;height:100%;justify-content:center;">
+            <div style="width:40%;height:calc(412/412*100%);background:linear-gradient(180deg,#00e5ff,#00b4d8);border-radius:1px 1px 0 0;animation:growBar 0.8s 0.1s ease forwards;transform:scaleY(0);transform-origin:bottom;"></div>
+            <div style="width:40%;height:calc(357/412*100%);background:linear-gradient(180deg,rgba(0,229,255,0.4),rgba(0,180,216,0.2));border-radius:1px 1px 0 0;border:1px solid rgba(0,229,255,0.3);animation:growBar 0.8s 0.1s ease forwards;transform:scaleY(0);transform-origin:bottom;"></div>
+          </div>
+          <div style="flex:1;display:flex;gap:2px;align-items:flex-end;height:100%;justify-content:center;">
+            <div style="width:40%;height:calc(298/412*100%);background:linear-gradient(180deg,#00f5a0,#00b880);border-radius:1px 1px 0 0;animation:growBar 0.8s 0.2s ease forwards;transform:scaleY(0);transform-origin:bottom;"></div>
+            <div style="width:40%;height:calc(258/412*100%);background:linear-gradient(180deg,rgba(0,245,160,0.4),rgba(0,184,128,0.2));border-radius:1px 1px 0 0;border:1px solid rgba(0,245,160,0.3);animation:growBar 0.8s 0.2s ease forwards;transform:scaleY(0);transform-origin:bottom;"></div>
+          </div>
+          <div style="flex:1;display:flex;gap:2px;align-items:flex-end;height:100%;justify-content:center;">
+            <div style="width:40%;height:calc(241/412*100%);background:linear-gradient(180deg,#ffd166,#e0a020);border-radius:1px 1px 0 0;animation:growBar 0.8s 0.3s ease forwards;transform:scaleY(0);transform-origin:bottom;"></div>
+            <div style="width:40%;height:calc(209/412*100%);background:linear-gradient(180deg,rgba(255,209,102,0.4),rgba(224,160,32,0.2));border-radius:1px 1px 0 0;border:1px solid rgba(255,209,102,0.3);animation:growBar 0.8s 0.3s ease forwards;transform:scaleY(0);transform-origin:bottom;"></div>
+          </div>
+          <div style="flex:1;display:flex;gap:2px;align-items:flex-end;height:100%;justify-content:center;">
+            <div style="width:40%;height:calc(183/412*100%);background:linear-gradient(180deg,#7b2fff,#5010cc);border-radius:1px 1px 0 0;animation:growBar 0.8s 0.4s ease forwards;transform:scaleY(0);transform-origin:bottom;"></div>
+            <div style="width:40%;height:calc(160/412*100%);background:linear-gradient(180deg,rgba(123,47,255,0.4),rgba(80,16,204,0.2));border-radius:1px 1px 0 0;border:1px solid rgba(123,47,255,0.3);animation:growBar 0.8s 0.4s ease forwards;transform:scaleY(0);transform-origin:bottom;"></div>
+          </div>
+          <div style="flex:1;display:flex;gap:2px;align-items:flex-end;height:100%;justify-content:center;">
+            <div style="width:40%;height:calc(102/412*100%);background:linear-gradient(180deg,#ff9f43,#e07020);border-radius:1px 1px 0 0;animation:growBar 0.8s 0.5s ease forwards;transform:scaleY(0);transform-origin:bottom;"></div>
+            <div style="width:40%;height:calc(88/412*100%);background:linear-gradient(180deg,rgba(255,159,67,0.4),rgba(224,112,32,0.2));border-radius:1px 1px 0 0;border:1px solid rgba(255,159,67,0.3);animation:growBar 0.8s 0.5s ease forwards;transform:scaleY(0);transform-origin:bottom;"></div>
+          </div>
+          <div style="flex:1;display:flex;gap:2px;align-items:flex-end;height:100%;justify-content:center;">
+            <div style="width:40%;height:calc(48/412*100%);background:linear-gradient(180deg,rgba(90,122,154,0.6),rgba(90,122,154,0.3));border-radius:1px 1px 0 0;animation:growBar 0.8s 0.6s ease forwards;transform:scaleY(0);transform-origin:bottom;"></div>
+            <div style="width:40%;height:calc(41/412*100%);background:linear-gradient(180deg,rgba(90,122,154,0.3),rgba(90,122,154,0.1));border-radius:1px 1px 0 0;border:1px solid rgba(90,122,154,0.2);animation:growBar 0.8s 0.6s ease forwards;transform:scaleY(0);transform-origin:bottom;"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:0;margin-top:8px;">
+          <div style="flex:1;text-align:center;font-size:9px;color:var(--muted);">台北</div>
+          <div style="flex:1;text-align:center;font-size:9px;color:var(--muted);">新北</div>
+          <div style="flex:1;text-align:center;font-size:9px;color:var(--muted);">台中</div>
+          <div style="flex:1;text-align:center;font-size:9px;color:var(--muted);">台南</div>
+          <div style="flex:1;text-align:center;font-size:9px;color:var(--muted);">高雄</div>
+          <div style="flex:1;text-align:center;font-size:9px;color:var(--muted);">其他</div>
+        </div>
+        <div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(232,244,255,0.5)"><span style="width:12px;height:8px;background:var(--cyan);display:block;border-radius:1px"></span>需求職缺數（實色）</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(232,244,255,0.5)"><span style="width:12px;height:8px;background:rgba(0,229,255,0.2);display:block;border-radius:1px;border:1px solid rgba(0,229,255,0.4)"></span>媒合人數（空心）</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">WORKY</div>
+      <div class="footer-info">
+        承攬制數據月報<br>
+        2026 · 06 · 30 結算<br>
+        VER 1.0 · INTERNAL USE ONLY
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
